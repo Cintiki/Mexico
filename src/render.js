@@ -155,10 +155,13 @@ function orderDie(state, seat) {
 
 function startOrderPlayerRow(state, seat) {
   return h("div", "order-player-row",
+    {},
     h("img", "portrait", { src: CHARACTERS[seat.characterId].portrait, alt: seat.displayName }),
     h("div", "player-meta",
+      {},
       h("strong", "", { text: seat.displayName }),
       h("div", "status-icons",
+        {},
         seat.isNpc ? h("img", "mini-icon", { src: ASSETS.icons.npc, alt: "NPC" }) : "",
       ),
     ),
