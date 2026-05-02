@@ -139,7 +139,7 @@ function diceStage(state) {
   if (current) stage.append(characterSprite(current));
   if (state.dice.isAnimating) {
     const sprite = ASSETS.diceSprites[state.dice.animationStage] ?? ASSETS.diceSprites.bounce;
-    stage.append(h("div", "dice-sprite is-animated", { style: spriteStyle(sprite) }));
+    stage.append(spriteElement(sprite, "dice-sprite", true, "Rolling dice"));
   }
   if (state.dice.visibleFinalDice) {
     const dice = h("div", "final-dice");
@@ -151,7 +151,16 @@ function diceStage(state) {
 
 function characterSprite(seat) {
   const sprite = CHARACTERS[seat.characterId].sprites[seat.spriteState] ?? CHARACTERS[seat.characterId].sprites.idle;
-  return h("div", `character-sprite ${sprite.static ? "is-static" : "is-animated"}`, { style: spriteStyle(sprite), title: seat.displayName });
+  return spriteElement(sprite, "character-sprite", !sprite.static, seat.displayName);
+}
+
+function spriteElement(sprite, className, animated, label) {
+  return h(
+    "div",
+    `${className} sprite-viewport frame-count-${sprite.frames} ${animated ? "is-animated" : "is-static"}`,
+    { style: spriteStyle(sprite), title: label },
+    h("img", "sprite-strip", { src: sprite.src, alt: label ?? "" }),
+  );
 }
 
 function controls(state, dispatch) {

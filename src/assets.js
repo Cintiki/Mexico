@@ -40,9 +40,9 @@ export const ASSETS = {
     diceSparkLines: "assets/props/prop_dice_spark_lines.png",
   },
   diceSprites: {
-    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_8f.png", frames: 8 },
-    throw: { src: "assets/sprites/dice/mexico_dice_throw_12f.png", frames: 12 },
-    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 12 },
+    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_8f.png", frames: 8, ratio: 0.5 },
+    throw: { src: "assets/sprites/dice/mexico_dice_throw_12f.png", frames: 12, ratio: 0.5 },
+    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 12, ratio: 0.5 },
   },
 };
 
@@ -62,11 +62,11 @@ function character(id, defaultName) {
     defaultName,
     portrait: `assets/portraits/portrait_${id}.png`,
     sprites: {
-      idle: { src: `assets/sprites/${id}/mexico_${id}_idle_4f.png`, frames: 4, loop: true },
-      victory: { src: `assets/sprites/${id}/mexico_${id}_victory_8f.png`, frames: 8 },
-      lose: { src: `assets/sprites/${id}/mexico_${id}_lose_6f.png`, frames: 6 },
-      out: { src: `assets/sprites/${id}/mexico_${id}_out_static.png`, frames: 1, static: true },
-      bus: { src: `assets/sprites/${id}/mexico_${id}_bus_static.png`, frames: 1, static: true },
+      idle: { src: `assets/sprites/${id}/mexico_${id}_idle_4f.png`, frames: 4, ratio: 1, loop: true },
+      victory: { src: `assets/sprites/${id}/mexico_${id}_victory_8f.png`, frames: 8, ratio: 1 },
+      lose: { src: `assets/sprites/${id}/mexico_${id}_lose_6f.png`, frames: 6, ratio: 1 },
+      out: { src: `assets/sprites/${id}/mexico_${id}_out_static.png`, frames: 1, ratio: 1, static: true },
+      bus: { src: `assets/sprites/${id}/mexico_${id}_bus_static.png`, frames: 1, ratio: 1, static: true },
     },
   };
 }

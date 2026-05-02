@@ -51,9 +51,9 @@ const ASSETS = {
     diceSparkLines: "assets/props/prop_dice_spark_lines.png",
   },
   diceSprites: {
-    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_8f.png", frames: 8 },
-    throw: { src: "assets/sprites/dice/mexico_dice_throw_12f.png", frames: 12 },
-    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 12 },
+    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_8f.png", frames: 8, ratio: 0.5 },
+    throw: { src: "assets/sprites/dice/mexico_dice_throw_12f.png", frames: 12, ratio: 0.5 },
+    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 12, ratio: 0.5 },
   },
 };
 
@@ -73,11 +73,11 @@ function character(id, defaultName) {
     defaultName,
     portrait: `assets/portraits/portrait_${id}.png`,
     sprites: {
-      idle: { src: `assets/sprites/${id}/mexico_${id}_idle_4f.png`, frames: 4, loop: true },
-      victory: { src: `assets/sprites/${id}/mexico_${id}_victory_8f.png`, frames: 8 },
-      lose: { src: `assets/sprites/${id}/mexico_${id}_lose_6f.png`, frames: 6 },
-      out: { src: `assets/sprites/${id}/mexico_${id}_out_static.png`, frames: 1, static: true },
-      bus: { src: `assets/sprites/${id}/mexico_${id}_bus_static.png`, frames: 1, static: true },
+      idle: { src: `assets/sprites/${id}/mexico_${id}_idle_4f.png`, frames: 4, ratio: 1, loop: true },
+      victory: { src: `assets/sprites/${id}/mexico_${id}_victory_8f.png`, frames: 8, ratio: 1 },
+      lose: { src: `assets/sprites/${id}/mexico_${id}_lose_6f.png`, frames: 6, ratio: 1 },
+      out: { src: `assets/sprites/${id}/mexico_${id}_out_static.png`, frames: 1, ratio: 1, static: true },
+      bus: { src: `assets/sprites/${id}/mexico_${id}_bus_static.png`, frames: 1, ratio: 1, static: true },
     },
   };
 }
@@ -249,8 +249,8 @@ function getRollLimit(state, seat) {
 // src/sprites.js
 function spriteStyle(sprite) {
   return [
-    `background-image: url("${sprite.src}")`,
     `--frames: ${sprite.frames}`,
+    `--sprite-ratio: ${sprite.ratio ?? 1}`,
   ].join(";");
 }
 
@@ -739,7 +739,7 @@ function diceStage(state) {
   if (current) stage.append(characterSprite(current));
   if (state.dice.isAnimating) {
     const sprite = ASSETS.diceSprites[state.dice.animationStage] ?? ASSETS.diceSprites.bounce;
-    stage.append(h("div", "dice-sprite is-animated", { style: spriteStyle(sprite) }));
+    stage.append(spriteElement(sprite, "dice-sprite", true, "Rolling dice"));
   }
   if (state.dice.visibleFinalDice) {
     const dice = h("div", "final-dice");
@@ -751,7 +751,16 @@ function diceStage(state) {
 
 function characterSprite(seat) {
   const sprite = CHARACTERS[seat.characterId].sprites[seat.spriteState] ?? CHARACTERS[seat.characterId].sprites.idle;
-  return h("div", `character-sprite ${sprite.static ? "is-static" : "is-animated"}`, { style: spriteStyle(sprite), title: seat.displayName });
+  return spriteElement(sprite, "character-sprite", !sprite.static, seat.displayName);
+}
+
+function spriteElement(sprite, className, animated, label) {
+  return h(
+    "div",
+    `${className} sprite-viewport frame-count-${sprite.frames} ${animated ? "is-animated" : "is-static"}`,
+    { style: spriteStyle(sprite), title: label },
+    h("img", "sprite-strip", { src: sprite.src, alt: label ?? "" }),
+  );
 }
 
 function controls(state, dispatch) {

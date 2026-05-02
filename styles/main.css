@@ -231,9 +231,7 @@ button:not(:disabled):hover {
   left: 8%;
   bottom: 12px;
   width: min(230px, 45%);
-  aspect-ratio: 1;
-  background-repeat: no-repeat;
-  background-size: calc(var(--frames) * 100%) 100%;
+  aspect-ratio: var(--sprite-ratio);
   image-rendering: auto;
 }
 
@@ -241,32 +239,90 @@ button:not(:disabled):hover {
   position: absolute;
   right: 12%;
   bottom: 34px;
-  width: min(230px, 44%);
-  aspect-ratio: 1;
-  background-repeat: no-repeat;
-  background-size: calc(var(--frames) * 100%) 100%;
+  height: min(260px, 78%);
+  aspect-ratio: var(--sprite-ratio);
   z-index: 2;
 }
 
-.character-sprite.is-animated {
-  animation: sprite-walk 0.9s steps(calc(var(--frames) - 1)) infinite;
+.sprite-viewport {
+  overflow: hidden;
 }
 
-.dice-sprite.is-animated {
-  animation: sprite-walk 0.7s steps(calc(var(--frames) - 1)) 1;
+.sprite-strip {
+  display: block;
+  height: 100%;
+  width: calc(var(--frames) * 100%);
+  max-width: none;
+  object-fit: fill;
+  transform: translateX(0);
 }
 
-.character-sprite.is-static {
-  background-size: 100% 100%;
+.character-sprite.is-animated .sprite-strip {
+  animation-duration: 0.9s;
+  animation-iteration-count: infinite;
 }
 
-@keyframes sprite-walk {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(100% * var(--frames) / (var(--frames) - 1)) 0;
-  }
+.dice-sprite.is-animated .sprite-strip {
+  animation-duration: 0.7s;
+  animation-iteration-count: 1;
+}
+
+.frame-count-4.is-animated .sprite-strip {
+  animation-name: sprite-4;
+}
+
+.frame-count-6.is-animated .sprite-strip {
+  animation-name: sprite-6;
+}
+
+.frame-count-8.is-animated .sprite-strip {
+  animation-name: sprite-8;
+}
+
+.frame-count-12.is-animated .sprite-strip {
+  animation-name: sprite-12;
+}
+
+@keyframes sprite-4 {
+  0%, 24.99% { transform: translateX(0); }
+  25%, 49.99% { transform: translateX(-25%); }
+  50%, 74.99% { transform: translateX(-50%); }
+  75%, 100% { transform: translateX(-75%); }
+}
+
+@keyframes sprite-6 {
+  0%, 16.65% { transform: translateX(0); }
+  16.66%, 33.32% { transform: translateX(-16.6667%); }
+  33.33%, 49.99% { transform: translateX(-33.3333%); }
+  50%, 66.65% { transform: translateX(-50%); }
+  66.66%, 83.32% { transform: translateX(-66.6667%); }
+  83.33%, 100% { transform: translateX(-83.3333%); }
+}
+
+@keyframes sprite-8 {
+  0%, 12.49% { transform: translateX(0); }
+  12.5%, 24.99% { transform: translateX(-12.5%); }
+  25%, 37.49% { transform: translateX(-25%); }
+  37.5%, 49.99% { transform: translateX(-37.5%); }
+  50%, 62.49% { transform: translateX(-50%); }
+  62.5%, 74.99% { transform: translateX(-62.5%); }
+  75%, 87.49% { transform: translateX(-75%); }
+  87.5%, 100% { transform: translateX(-87.5%); }
+}
+
+@keyframes sprite-12 {
+  0%, 8.32% { transform: translateX(0); }
+  8.33%, 16.65% { transform: translateX(-8.3333%); }
+  16.66%, 24.99% { transform: translateX(-16.6667%); }
+  25%, 33.32% { transform: translateX(-25%); }
+  33.33%, 41.65% { transform: translateX(-33.3333%); }
+  41.66%, 49.99% { transform: translateX(-41.6667%); }
+  50%, 58.32% { transform: translateX(-50%); }
+  58.33%, 66.65% { transform: translateX(-58.3333%); }
+  66.66%, 74.99% { transform: translateX(-66.6667%); }
+  75%, 83.32% { transform: translateX(-75%); }
+  83.33%, 91.65% { transform: translateX(-83.3333%); }
+  91.66%, 100% { transform: translateX(-91.6667%); }
 }
 
 .final-dice {

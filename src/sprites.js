@@ -1,6 +1,6 @@
 export function spriteStyle(sprite) {
   return [
-    `background-image: url("${sprite.src}")`,
     `--frames: ${sprite.frames}`,
+    `--sprite-ratio: ${sprite.ratio ?? 1}`,
   ].join(";");
 }
