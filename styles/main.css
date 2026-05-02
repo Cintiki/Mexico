@@ -565,6 +565,27 @@ button:not(:disabled):hover {
   position: relative;
 }
 
+.winner-feature {
+  min-height: 590px;
+  grid-template-rows: auto 1fr;
+}
+
+.winner-card {
+  width: min(410px, 84%);
+  align-self: start;
+}
+
+.winner-tray {
+  width: min(560px, 100%);
+  align-self: end;
+}
+
+.winner-feature .character-sprite {
+  left: 14%;
+  bottom: 14px;
+  width: min(250px, 46%);
+}
+
 .coin-burst {
   position: absolute;
   width: min(190px, 34%);
