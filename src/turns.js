@@ -137,7 +137,10 @@ export function rollCurrentPlayer(state) {
   state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
   addLog(state, `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
 
-  if (seat.turnRollsUsed >= limit) {
+  if (score.isMexico) {
+    addLog(state, `${seat.displayName} must hold on Mexico.`);
+    holdCurrentPlayer(state);
+  } else if (seat.turnRollsUsed >= limit) {
     holdCurrentPlayer(state);
   }
 }

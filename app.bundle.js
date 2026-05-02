@@ -391,7 +391,10 @@ function rollCurrentPlayer(state) {
   state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
   addLog(state, `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
 
-  if (seat.turnRollsUsed >= limit) {
+  if (score.isMexico) {
+    addLog(state, `${seat.displayName} must hold on Mexico.`);
+    holdCurrentPlayer(state);
+  } else if (seat.turnRollsUsed >= limit) {
     holdCurrentPlayer(state);
   }
 }
@@ -755,6 +758,7 @@ function controls(state, dispatch) {
   const seat = state.seats.find((item) => item.seatIndex === state.game.currentSeatId);
   const limit = seat ? displayRollLimitFor(state, seat) : 0;
   const rollLimitReached = Boolean(seat) && seat.turnRollsUsed >= limit;
+  const mustHoldMexico = Boolean(seat?.lastRoll?.isMexico);
   const disabled = !seat || seat.isNpc || state.phase !== "round-turn";
   const canHold = !disabled && Boolean(seat.lastRoll);
   const wrap = h("div", "controls");
@@ -763,7 +767,7 @@ function controls(state, dispatch) {
     return wrap;
   }
   if (seat) wrap.append(h("span", "roll-limit-note", { text: `Rolls: ${seat.turnRollsUsed}/${limit}` }));
-  if (!rollLimitReached) {
+  if (!rollLimitReached && !mustHoldMexico) {
     wrap.append(h("button", "game-button", { text: "Roll", disabled, onClick: () => dispatch(rollCurrentPlayer) }));
   }
   wrap.append(h("button", "game-button", { text: "Hold", disabled: !canHold, onClick: () => dispatch(holdCurrentPlayer) }));
