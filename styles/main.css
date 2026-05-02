@@ -455,7 +455,7 @@ button:not(:disabled):hover {
 }
 
 .order-layout {
-  width: min(1060px, 92%);
+  width: min(1180px, 94%);
   display: block;
 }
 
@@ -466,8 +466,8 @@ button:not(:disabled):hover {
 
 .order-row-wrap {
   display: grid;
-  grid-template-columns: 170px 76px minmax(480px, 1fr) 104px;
-  gap: 16px;
+  grid-template-columns: 190px 76px minmax(500px, 1fr) 112px;
+  gap: 18px;
   align-items: center;
 }
 

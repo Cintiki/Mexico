@@ -896,9 +896,12 @@ function orderDie(state, seat) {
   const isRolling = state.startOrder.rollingSeatId === seat.seatIndex;
   const die = isRolling ? state.startOrder.cycleDie : state.startOrder.displayRolls[seat.seatIndex];
   const className = `order-die ${isRolling ? "is-rolling" : ""} ${die ? "" : "is-empty"}`;
-  return h("div", className, die
-    ? h("img", "order-die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
-    : "");
+  return h(
+    "div",
+    className,
+    {},
+    die ? h("img", "order-die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` }) : "",
+  );
 }
 
 function orderRowStatusText(state, seat) {
