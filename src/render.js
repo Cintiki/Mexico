@@ -141,7 +141,7 @@ function diceStage(state) {
     const sprite = ASSETS.diceSprites[state.dice.animationStage] ?? ASSETS.diceSprites.bounce;
     stage.append(spriteElement(sprite, "dice-sprite", true, "Rolling dice"));
   }
-  if (state.dice.visibleFinalDice) {
+  if (state.dice.visibleFinalDice && !state.dice.isAnimating) {
     const dice = h("div", "final-dice");
     state.dice.visibleFinalDice.forEach((die) => dice.append(h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })));
     stage.append(dice);
