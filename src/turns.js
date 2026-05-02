@@ -139,9 +139,7 @@ export function rollCurrentPlayer(state) {
   state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
   addLog(state, `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
 
-  if (seat.seatIndex === state.game.startingSeatId && seat.turnRollsUsed === 3) {
-    holdCurrentPlayer(state);
-  } else if (seat.seatIndex !== state.game.startingSeatId && seat.turnRollsUsed >= state.game.maxRollsThisRound) {
+  if (seat.turnRollsUsed >= limit) {
     holdCurrentPlayer(state);
   }
 }
