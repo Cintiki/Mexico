@@ -42,7 +42,7 @@ export const ASSETS = {
   diceSprites: {
     shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_8f.png", frames: 8, ratio: 0.5 },
     throw: { src: "assets/sprites/dice/mexico_dice_throw_12f.png", frames: 12, ratio: 0.5 },
-    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 12, ratio: 0.5 },
+    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 12, ratio: 0.6667 },
   },
 };
 
