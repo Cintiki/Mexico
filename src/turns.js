@@ -99,6 +99,7 @@ export function beginStartOrder(state) {
   const active = [...state.game.activeSeatIds];
   state.overlay = null;
   state.overlayQueue = [];
+  state.pendingOverlay = null;
   state.startOrder = {
     ...freshStartOrder(),
     phase: "rolling",
@@ -180,7 +181,7 @@ export function rollCurrentPlayer(state) {
   };
   if (score.isMexico) {
     state.game.mexicoCount += 1;
-    pushOverlay(state, "mexico", "Mexico!", `${seat.displayName} rolled 2-1. The round penalty is now ${describeStrikeGain(state.game.mexicoCount)} strikes.`);
+    state.pendingOverlay = makeOverlay("mexico", "Mexico!", `${seat.displayName} rolled 2-1. The round penalty is now ${describeStrikeGain(state.game.mexicoCount)} strikes.`);
   }
   recomputeCurrentBest(state);
   state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
@@ -344,6 +345,7 @@ function settleStartOrderRound(state) {
     updateStartOrderDisplay(state);
     state.overlay = null;
     state.overlayQueue = [];
+    state.pendingOverlay = null;
     addLog(state, `Order tiebreaker: ${names}.`);
     return;
   }

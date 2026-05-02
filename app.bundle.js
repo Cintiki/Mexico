@@ -191,6 +191,7 @@ function createState() {
     log: [],
     overlay: null,
     overlayQueue: [],
+    pendingOverlay: null,
   };
 }
 
@@ -373,6 +374,7 @@ function beginStartOrder(state) {
   const active = [...state.game.activeSeatIds];
   state.overlay = null;
   state.overlayQueue = [];
+  state.pendingOverlay = null;
   state.startOrder = {
     ...freshStartOrder(),
     phase: "rolling",
@@ -454,7 +456,7 @@ function rollCurrentPlayer(state) {
   };
   if (score.isMexico) {
     state.game.mexicoCount += 1;
-    pushOverlay(state, "mexico", "Mexico!", `${seat.displayName} rolled 2-1. The round penalty is now ${describeStrikeGain(state.game.mexicoCount)} strikes.`);
+    state.pendingOverlay = makeOverlay("mexico", "Mexico!", `${seat.displayName} rolled 2-1. The round penalty is now ${describeStrikeGain(state.game.mexicoCount)} strikes.`);
   }
   recomputeCurrentBest(state);
   state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
@@ -618,6 +620,7 @@ function settleStartOrderRound(state) {
     updateStartOrderDisplay(state);
     state.overlay = null;
     state.overlayQueue = [];
+    state.pendingOverlay = null;
     addLog(state, `Order tiebreaker: ${names}.`);
     return;
   }
@@ -1129,6 +1132,7 @@ function gameWinnerControls(dispatch) {
       const leader = [...state.seats].sort((a, b) => b.coins - a.coins)[0];
       state.overlay = { type: "sessionChampion", title: `${leader.displayName} is Mexico Champion!`, message: "Session over." };
       state.overlayQueue = [];
+      state.pendingOverlay = null;
     }) }),
   );
 }
@@ -1141,10 +1145,12 @@ function sessionControls(dispatch) {
       state.phase = "landing";
       state.overlay = null;
       state.overlayQueue = [];
+      state.pendingOverlay = null;
     }) }),
     h("button", "game-button", { text: "Quit", onClick: () => dispatch((state) => {
       state.message = "Thanks for playing.";
       state.overlay = null;
+      state.pendingOverlay = null;
     }) }),
   );
 }
@@ -1219,8 +1225,17 @@ function scheduleDiceSettle() {
     diceTimer = setTimeout(() => dispatch((draft) => {
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
+      showPendingOverlay(draft);
     }), 700);
   }
+}
+
+function showPendingOverlay(draft) {
+  if (!draft.pendingOverlay) return;
+  const overlay = draft.pendingOverlay;
+  draft.pendingOverlay = null;
+  if (draft.overlay) draft.overlayQueue.push(overlay);
+  else draft.overlay = overlay;
 }
 
 function scheduleAutoHold() {

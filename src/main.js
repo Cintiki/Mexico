@@ -37,8 +37,17 @@ function scheduleDiceSettle() {
     diceTimer = setTimeout(() => dispatch((draft) => {
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
+      showPendingOverlay(draft);
     }), 700);
   }
+}
+
+function showPendingOverlay(draft) {
+  if (!draft.pendingOverlay) return;
+  const overlay = draft.pendingOverlay;
+  draft.pendingOverlay = null;
+  if (draft.overlay) draft.overlayQueue.push(overlay);
+  else draft.overlay = overlay;
 }
 
 function scheduleAutoHold() {

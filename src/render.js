@@ -353,6 +353,7 @@ function gameWinnerControls(dispatch) {
       const leader = [...state.seats].sort((a, b) => b.coins - a.coins)[0];
       state.overlay = { type: "sessionChampion", title: `${leader.displayName} is Mexico Champion!`, message: "Session over." };
       state.overlayQueue = [];
+      state.pendingOverlay = null;
     }) }),
   );
 }
@@ -365,10 +366,12 @@ function sessionControls(dispatch) {
       state.phase = "landing";
       state.overlay = null;
       state.overlayQueue = [];
+      state.pendingOverlay = null;
     }) }),
     h("button", "game-button", { text: "Quit", onClick: () => dispatch((state) => {
       state.message = "Thanks for playing.";
       state.overlay = null;
+      state.pendingOverlay = null;
     }) }),
   );
 }
