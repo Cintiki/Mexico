@@ -387,9 +387,7 @@ function rollCurrentPlayer(state) {
     state.game.mexicoCount += 1;
     pushOverlay(state, "mexico", "Mexico!", `${seat.displayName} rolled 2-1. The round penalty is now ${describeStrikeGain(state.game.mexicoCount)} strikes.`);
   }
-  if (!state.game.currentBest || score.rank > state.game.currentBest.score.rank) {
-    state.game.currentBest = { seatIndex: seat.seatIndex, score, rollsUsed: seat.turnRollsUsed };
-  }
+  recomputeCurrentBest(state);
   state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
   addLog(state, `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
 
@@ -536,6 +534,24 @@ function logIgnoredMiddleTies(state, entries, highRank, lowRank) {
       addLog(state, `Middle tie ignored: ${group.map((entry) => seatById(state, entry.seatIndex).displayName).join(" and ")}.`);
     }
   });
+}
+
+function recomputeCurrentBest(state) {
+  const entries = Object.entries(state.game.roundRolls).map(([seatIndex, roll]) => ({
+    seatIndex: Number(seatIndex),
+    score: roll.score,
+    rollsUsed: roll.rollsUsed,
+  }));
+  if (!entries.length) {
+    state.game.currentBest = null;
+    return;
+  }
+  const best = tiedByScore(entries, true)[0];
+  state.game.currentBest = {
+    seatIndex: best.seatIndex,
+    score: best.score,
+    rollsUsed: best.rollsUsed,
+  };
 }
 
 function clockwiseOrder(state, starterId) {
