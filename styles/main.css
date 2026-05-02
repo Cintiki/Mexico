@@ -82,6 +82,13 @@ input {
   line-height: 1;
 }
 
+.turn-title {
+  min-height: 108px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .screen-copy {
   margin: 0;
   max-width: 620px;
@@ -237,8 +244,8 @@ button:not(:disabled):hover {
 
 .dice-sprite {
   position: absolute;
-  right: 10%;
-  bottom: 42px;
+  right: 7%;
+  bottom: 66px;
   height: min(178px, 54%);
   aspect-ratio: var(--sprite-ratio);
   z-index: 2;
@@ -345,8 +352,8 @@ button:not(:disabled):hover {
 
 .final-dice {
   position: absolute;
-  right: 6%;
-  bottom: 74px;
+  right: 9%;
+  bottom: 86px;
   display: flex;
   gap: 14px;
   align-items: center;

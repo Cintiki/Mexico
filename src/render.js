@@ -118,12 +118,12 @@ function gameBoard(state, dispatch) {
     left.append(diceStage(state));
     left.append(controls(state, dispatch));
   }
-  left.append(logPanel(state));
 
   const right = h("aside", "side-panel");
   right.append(rollToBeat(state));
   right.append(potBox(state));
   right.append(scoreboard(state));
+  right.append(logPanel(state));
 
   shell.append(left, right);
   if (state.overlay) shell.append(overlay(state, dispatch));
