@@ -440,8 +440,8 @@ button:not(:disabled):hover {
 
 .player-row {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 54px 52px 64px;
-  gap: 8px;
+  grid-template-columns: 54px minmax(72px, 1fr) 52px 42px 54px;
+  gap: 6px;
   min-height: 78px;
   align-items: center;
   padding: 7px;
@@ -467,9 +467,10 @@ button:not(:disabled):hover {
 
 .player-meta strong {
   display: block;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .status-icons {
@@ -491,7 +492,7 @@ button:not(:disabled):hover {
 .strike-text,
 .coin-text {
   font-weight: 900;
-  font-size: 20px;
+  font-size: 18px;
   white-space: nowrap;
 }
 
