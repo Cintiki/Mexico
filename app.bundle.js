@@ -885,7 +885,6 @@ function startOrderBoard(state) {
       h("span", "order-row-status", { text: orderRowStatusText(state, seat) }),
       h("span", "order-rank", { text: `#${index + 1}` }),
       startOrderPlayerRow(state, seat),
-      orderDie(state, seat),
     ));
   });
   wrap.append(list);
@@ -916,6 +915,7 @@ function startOrderPlayerRow(state, seat) {
         seat.isNpc ? h("img", "mini-icon", { src: ASSETS.icons.npc, alt: "NPC" }) : "",
       ),
     ),
+    orderDie(state, seat),
     h("span", "roll-text", { text: "-" }),
     h("span", "strike-text", { text: "0" }),
     h("span", "coin-text", { text: `${seat.coins}x` }, h("img", "mini-icon", { src: ASSETS.icons.coin, alt: "coins" })),

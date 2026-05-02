@@ -455,7 +455,7 @@ button:not(:disabled):hover {
 }
 
 .order-layout {
-  width: min(1180px, 94%);
+  width: min(1120px, 94%);
   display: block;
 }
 
@@ -466,7 +466,7 @@ button:not(:disabled):hover {
 
 .order-row-wrap {
   display: grid;
-  grid-template-columns: 190px 76px 520px 112px;
+  grid-template-columns: 190px 76px 650px;
   gap: 18px;
   align-items: center;
   justify-content: center;
@@ -490,15 +490,16 @@ button:not(:disabled):hover {
 .order-die {
   display: grid;
   place-items: center;
-  width: 104px;
-  height: 86px;
+  width: 90px;
+  height: 70px;
   line-height: 0;
+  justify-self: center;
 }
 
 .order-die-face {
   display: block;
-  width: 88px;
-  height: 88px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.28));
 }
@@ -516,15 +517,22 @@ button:not(:disabled):hover {
   border-radius: 8px;
   background: #fff;
   display: grid;
-  grid-template-columns: 62px minmax(190px, 1fr) 48px 42px 58px;
-  gap: 8px;
+  grid-template-columns: 62px minmax(170px, 1fr) 90px 48px 42px 58px;
+  gap: 10px;
   min-height: 82px;
   align-items: center;
   padding: 7px 10px;
 }
 
+.order-player-row .player-meta {
+  overflow: hidden;
+}
+
 .order-player-row .player-meta strong {
   font-size: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @keyframes die-pop {
