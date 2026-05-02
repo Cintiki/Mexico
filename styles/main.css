@@ -579,8 +579,8 @@ button:not(:disabled):hover {
 
 .player-row {
   display: grid;
-  grid-template-columns: 60px minmax(86px, 1fr) 54px 44px 58px;
-  gap: 6px;
+  grid-template-columns: 60px minmax(82px, 1fr) minmax(86px, 128px) minmax(36px, auto) 62px;
+  gap: 8px;
   min-height: 86px;
   align-items: center;
   padding: 7px;
@@ -631,8 +631,16 @@ button:not(:disabled):hover {
 .strike-text,
 .coin-text {
   font-weight: 900;
-  font-size: clamp(18px, 1.45vw, 24px);
+  font-size: clamp(17px, 1.35vw, 23px);
   white-space: nowrap;
+}
+
+.roll-text {
+  text-align: right;
+}
+
+.strike-text {
+  text-align: center;
 }
 
 .coin-text {
@@ -708,15 +716,15 @@ button:not(:disabled):hover {
 }
 
 .winner-logo {
-  width: min(520px, 92%);
+  width: min(460px, 84%);
   align-self: center;
-  margin: -18px auto 0;
+  margin: 0 auto 0;
 }
 
 .winner-tray {
   width: min(560px, 100%);
   align-self: start;
-  margin-top: -4px;
+  margin-top: -10px;
 }
 
 .winner-feature .character-sprite {
@@ -734,8 +742,8 @@ button:not(:disabled):hover {
 
 .winner-pot {
   position: absolute;
-  left: 36%;
-  bottom: 82px;
+  left: 44%;
+  bottom: 132px;
   transform: translateX(-50%);
   display: grid;
   gap: 2px;
@@ -798,7 +806,7 @@ button:not(:disabled):hover {
   }
 
   .player-row {
-    grid-template-columns: 48px minmax(0, 1fr) 42px 42px 56px;
+    grid-template-columns: 48px minmax(0, 1fr) minmax(64px, 90px) 36px 56px;
   }
 
   .final-dice {
