@@ -65,7 +65,7 @@ export function freshStartOrder() {
     candidates: [],
     queue: [],
     lockedIds: [],
-    tailIds: [],
+    pendingGroups: [],
     rolls: {},
     displayRolls: {},
     order: [],

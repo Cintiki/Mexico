@@ -104,7 +104,7 @@ export function beginStartOrder(state) {
     phase: "rolling",
     candidates: active,
     queue: [...active],
-    tailIds: [],
+    pendingGroups: [],
     order: active,
     message: "Rolling for order.",
   };
@@ -324,32 +324,37 @@ function finishGame(state, winner) {
 function settleStartOrderRound(state) {
   const startOrder = state.startOrder;
   const groups = groupStartOrderCandidates(startOrder.candidates, startOrder.rolls);
-  const tiedGroup = groups.find((group) => group.ids.length > 1);
+  const tiedGroupIndex = groups.findIndex((group) => group.ids.length > 1);
 
-  if (tiedGroup) {
+  if (tiedGroupIndex >= 0) {
+    const tiedGroup = groups[tiedGroupIndex];
     const names = tiedGroup.ids.map((seatId) => seatById(state, seatId).displayName).join(" and ");
     const lockedIds = groups
-      .slice(0, groups.indexOf(tiedGroup))
+      .slice(0, tiedGroupIndex)
       .flatMap((group) => group.ids);
     startOrder.lockedIds = [...startOrder.lockedIds, ...lockedIds];
-    startOrder.tailIds = groups
-      .slice(groups.indexOf(tiedGroup) + 1)
-      .flatMap((group) => group.ids);
+    startOrder.pendingGroups = [
+      ...groups.slice(tiedGroupIndex + 1).map((group) => group.ids),
+      ...startOrder.pendingGroups,
+    ];
     startOrder.candidates = tiedGroup.ids;
     startOrder.queue = [...tiedGroup.ids];
     startOrder.rolls = {};
     startOrder.message = `${names} battle for placement.`;
+    updateStartOrderDisplay(state);
     state.overlay = null;
     state.overlayQueue = [];
     addLog(state, `Order tiebreaker: ${names}.`);
     return;
   }
 
-  startOrder.order = [
+  startOrder.lockedIds = [
     ...startOrder.lockedIds,
     ...groups.flatMap((group) => group.ids),
-    ...startOrder.tailIds,
   ];
+  if (advancePendingStartOrderGroup(state)) return;
+
+  startOrder.order = [...startOrder.lockedIds];
   startOrder.phase = "complete";
   startOrder.isComplete = true;
   startOrder.message = `${seatById(state, startOrder.order[0]).displayName} goes first.`;
@@ -363,8 +368,28 @@ function updateStartOrderDisplay(state) {
     ...startOrder.lockedIds,
     ...groups.flatMap((group) => group.ids),
     ...startOrder.candidates.filter((seatId) => startOrder.rolls[seatId] === undefined),
-    ...startOrder.tailIds,
+    ...startOrder.pendingGroups.flat(),
   ];
+}
+
+function advancePendingStartOrderGroup(state) {
+  const startOrder = state.startOrder;
+  while (startOrder.pendingGroups.length) {
+    const nextGroup = startOrder.pendingGroups.shift();
+    if (nextGroup.length <= 1) {
+      startOrder.lockedIds = [...startOrder.lockedIds, ...nextGroup];
+      continue;
+    }
+    const names = nextGroup.map((seatId) => seatById(state, seatId).displayName).join(" and ");
+    startOrder.candidates = nextGroup;
+    startOrder.queue = [...nextGroup];
+    startOrder.rolls = {};
+    startOrder.message = `${names} battle for placement.`;
+    updateStartOrderDisplay(state);
+    addLog(state, `Order tiebreaker: ${names}.`);
+    return true;
+  }
+  return false;
 }
 
 function groupStartOrderCandidates(seatIds, rolls) {
