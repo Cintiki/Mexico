@@ -260,11 +260,13 @@ button:not(:disabled):hover {
 .character-sprite.is-animated .sprite-strip {
   animation-duration: 0.9s;
   animation-iteration-count: infinite;
+  animation-timing-function: steps(1, end);
 }
 
 .dice-sprite.is-animated .sprite-strip {
   animation-duration: 0.7s;
   animation-iteration-count: 1;
+  animation-timing-function: steps(1, end);
 }
 
 .frame-count-4.is-animated .sprite-strip {

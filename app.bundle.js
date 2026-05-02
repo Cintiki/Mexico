@@ -210,6 +210,7 @@ function freshGame() {
     turnIndex: 0,
     currentBest: null,
     awaitingNextRound: false,
+    pendingAutoHoldSeatId: null,
   };
 }
 
@@ -393,15 +394,16 @@ function rollCurrentPlayer(state) {
 
   if (score.isMexico) {
     addLog(state, `${seat.displayName} must hold on Mexico.`);
-    holdCurrentPlayer(state);
+    state.game.pendingAutoHoldSeatId = seat.seatIndex;
   } else if (seat.turnRollsUsed >= limit) {
-    holdCurrentPlayer(state);
+    state.game.pendingAutoHoldSeatId = seat.seatIndex;
   }
 }
 
 function holdCurrentPlayer(state) {
   const seat = currentSeat(state);
   if (!seat || !seat.lastRoll) return;
+  state.game.pendingAutoHoldSeatId = null;
   if (seat.seatIndex === state.game.startingSeatId && state.game.maxRollsThisRound === null) {
     state.game.maxRollsThisRound = seat.turnRollsUsed;
     addLog(state, `${seat.displayName} sets this round to ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
@@ -927,11 +929,13 @@ const state = createState();
 preloadAssets();
 let npcTimer = null;
 let diceTimer = null;
+let autoHoldTimer = null;
 
 function dispatch(mutator) {
   mutator(state);
   render(state, dispatch);
   scheduleDiceSettle();
+  scheduleAutoHold();
   scheduleNpc();
 }
 
@@ -941,7 +945,7 @@ scheduleNpc();
 function scheduleNpc() {
   clearTimeout(npcTimer);
   const current = state.seats.find((seat) => seat.seatIndex === state.game.currentSeatId);
-  if (state.phase === "round-turn" && current?.isNpc && !state.overlay) {
+  if (state.phase === "round-turn" && current?.isNpc && !state.overlay && !state.game.pendingAutoHoldSeatId) {
     npcTimer = setTimeout(() => dispatch(runNpcStep), 850);
   }
 }
@@ -953,6 +957,18 @@ function scheduleDiceSettle() {
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
     }), 700);
+  }
+}
+
+function scheduleAutoHold() {
+  clearTimeout(autoHoldTimer);
+  if (state.game.pendingAutoHoldSeatId !== null && !state.dice.isAnimating && !state.overlay) {
+    autoHoldTimer = setTimeout(() => dispatch((draft) => {
+      const pendingSeatId = draft.game.pendingAutoHoldSeatId;
+      if (pendingSeatId === null || pendingSeatId !== draft.game.currentSeatId) return;
+      draft.game.pendingAutoHoldSeatId = null;
+      holdCurrentPlayer(draft);
+    }), 1100);
   }
 }
 

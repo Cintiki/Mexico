@@ -54,6 +54,7 @@ export function freshGame() {
     turnIndex: 0,
     currentBest: null,
     awaitingNextRound: false,
+    pendingAutoHoldSeatId: null,
   };
 }
 

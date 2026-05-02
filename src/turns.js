@@ -139,15 +139,16 @@ export function rollCurrentPlayer(state) {
 
   if (score.isMexico) {
     addLog(state, `${seat.displayName} must hold on Mexico.`);
-    holdCurrentPlayer(state);
+    state.game.pendingAutoHoldSeatId = seat.seatIndex;
   } else if (seat.turnRollsUsed >= limit) {
-    holdCurrentPlayer(state);
+    state.game.pendingAutoHoldSeatId = seat.seatIndex;
   }
 }
 
 export function holdCurrentPlayer(state) {
   const seat = currentSeat(state);
   if (!seat || !seat.lastRoll) return;
+  state.game.pendingAutoHoldSeatId = null;
   if (seat.seatIndex === state.game.startingSeatId && state.game.maxRollsThisRound === null) {
     state.game.maxRollsThisRound = seat.turnRollsUsed;
     addLog(state, `${seat.displayName} sets this round to ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
