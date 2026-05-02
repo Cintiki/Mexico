@@ -15,6 +15,7 @@ const files = [
 const pieces = files.map((file) => {
   let source = fs.readFileSync(path.join(__dirname, file), "utf8");
   source = source
+    .replace(/^import[\s\S]*?from\s+["'][^"']+["'];\r?\n/gm, "")
     .replace(/^import .*?;\r?\n/gm, "")
     .replace(/^export function /gm, "function ")
     .replace(/^export const /gm, "const ");
@@ -26,4 +27,4 @@ const bundle = `(function () {\n"use strict";\nfunction showStartupError(error) 
 fs.writeFileSync(path.join(__dirname, "app.bundle.js"), bundle);
 
 const template = fs.readFileSync(path.join(__dirname, "index.template.html"), "utf8");
-fs.writeFileSync(path.join(__dirname, "index.html"), template.replace("__APP_BUNDLE__", bundle));
+fs.writeFileSync(path.join(__dirname, "index.html"), template);
