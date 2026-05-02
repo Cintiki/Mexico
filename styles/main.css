@@ -226,6 +226,12 @@ button:not(:disabled):hover {
   overflow: hidden;
 }
 
+.play-area:has(.winner-logo) {
+  grid-template-rows: clamp(210px, 30vh, 330px) minmax(360px, 1fr);
+  gap: 12px;
+  overflow: visible;
+}
+
 .side-panel {
   display: flex;
   flex-direction: column;
@@ -711,42 +717,52 @@ button:not(:disabled):hover {
 }
 
 .winner-feature {
-  min-height: 430px;
-  align-content: start;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(280px, 1fr) auto;
+  place-items: center;
+  align-content: end;
+  overflow: visible;
 }
 
 .winner-logo {
-  width: min(460px, 84%);
+  width: min(500px, 86%);
+  max-height: 100%;
+  object-fit: contain;
   align-self: center;
   margin: 0 auto 0;
 }
 
 .winner-tray {
-  width: min(560px, 100%);
-  align-self: start;
-  margin-top: -10px;
+  grid-row: 1;
+  width: min(600px, 92%);
+  align-self: end;
+  margin: 0 auto;
 }
 
 .winner-feature .character-sprite {
-  left: 14%;
-  bottom: 24px;
-  width: min(250px, 46%);
+  left: 6%;
+  bottom: 56px;
+  width: min(230px, 36%);
+  z-index: 2;
 }
 
 .coin-burst {
   position: absolute;
-  width: min(210px, 36%);
-  right: 8%;
-  bottom: 34px;
+  width: min(190px, 30%);
+  right: 6%;
+  bottom: 88px;
+  z-index: 2;
 }
 
 .winner-pot {
-  position: absolute;
-  left: 44%;
-  bottom: 132px;
-  transform: translateX(-50%);
+  grid-row: 2;
+  position: relative;
+  z-index: 3;
   display: grid;
-  gap: 2px;
+  gap: 4px;
+  margin-top: -8px;
   text-align: center;
   text-transform: uppercase;
   font-weight: 900;
@@ -754,11 +770,11 @@ button:not(:disabled):hover {
 }
 
 .winner-pot span {
-  font-size: clamp(24px, 2.8vw, 42px);
+  font-size: clamp(28px, 3vw, 46px);
 }
 
 .winner-pot strong {
-  font-size: clamp(18px, 2vw, 30px);
+  font-size: clamp(20px, 2vw, 30px);
 }
 
 .bottom-actions {
