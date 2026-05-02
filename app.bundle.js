@@ -446,36 +446,26 @@ function finishRound(state) {
   const winnerId = winnerEntries.length > 1
     ? resolveOneDieTie(state, winnerEntries.map((entry) => entry.seatIndex), "high", "wins the round", "Round winner tiebreaker")
     : winnerEntries[0].seatIndex;
-  const loserId = loserEntries.length > 1
-    ? resolveOneDieTie(state, loserEntries.map((entry) => entry.seatIndex), "low", "loses the round", "Round loser tiebreaker")
-    : loserEntries[0].seatIndex;
+  const loserIds = loserEntries
+    .map((entry) => entry.seatIndex)
+    .filter((seatIndex) => seatIndex !== winnerId);
 
-  applyRoundResult(state, winnerId, loserId);
+  applyRoundResult(state, winnerId, loserIds);
 }
 
-function applyRoundResult(state, winnerId, loserId) {
+function applyRoundResult(state, winnerId, loserIds) {
   const winner = seatById(state, winnerId);
-  const loser = seatById(state, loserId);
+  const losers = loserIds.map((loserId) => seatById(state, loserId)).filter(Boolean);
   const strikeGain = describeStrikeGain(state.game.mexicoCount);
   winner.spriteState = "victory";
-  loser.spriteState = loser.isRidingBus ? "out" : "lose";
-  pushOverlay(state, "roundWinner", `${winner.displayName} wins the round!`, `${loser.displayName} takes ${strikeGain} strike${strikeGain === 1 ? "" : "s"}.`);
-  addLog(state, `${winner.displayName} wins. ${loser.displayName} takes ${strikeGain} strike${strikeGain === 1 ? "" : "s"}.`);
+  losers.forEach((loser) => {
+    loser.spriteState = loser.isRidingBus ? "out" : "lose";
+  });
+  const loserNames = formatNameList(losers.map((loser) => loser.displayName));
+  pushOverlay(state, "roundWinner", `${winner.displayName} wins the round!`, `${loserNames} ${losers.length === 1 ? "takes" : "take"} ${strikeGain} strike${strikeGain === 1 ? "" : "s"}.`);
+  addLog(state, `${winner.displayName} wins. ${loserNames} ${losers.length === 1 ? "takes" : "take"} ${strikeGain} strike${strikeGain === 1 ? "" : "s"}.`);
 
-  if (loser.isRidingBus) {
-    eliminatePlayer(state, loser);
-  } else {
-    loser.strikes += strikeGain;
-    if (loser.strikes === 5 && !state.game.busUsed) {
-      loser.isRidingBus = true;
-      loser.spriteState = "bus";
-      state.game.busUsed = true;
-      state.game.busSeatId = loser.seatIndex;
-      pushOverlay(state, "rideBus", "Riding the Bus!", `${loser.displayName} gets one more chance.`);
-    } else if (loser.strikes >= 5) {
-      eliminatePlayer(state, loser);
-    }
-  }
+  losers.forEach((loser) => applyStrikePenalty(state, loser, strikeGain));
 
   const active = activeSeats(state);
   if (active.length <= 1) {
@@ -486,6 +476,29 @@ function applyRoundResult(state, winnerId, loserId) {
   state.game.nextStarterId = winnerId;
   state.phase = "round-result";
   state.message = `${winner.displayName} starts the next round.`;
+}
+
+function applyStrikePenalty(state, loser, strikeGain) {
+  if (loser.isRidingBus) {
+    eliminatePlayer(state, loser);
+    return;
+  }
+  loser.strikes += strikeGain;
+  if (loser.strikes === 5 && !state.game.busUsed) {
+    loser.isRidingBus = true;
+    loser.spriteState = "bus";
+    state.game.busUsed = true;
+    state.game.busSeatId = loser.seatIndex;
+    pushOverlay(state, "rideBus", "Riding the Bus!", `${loser.displayName} gets one more chance.`);
+  } else if (loser.strikes >= 5) {
+    eliminatePlayer(state, loser);
+  }
+}
+
+function formatNameList(names) {
+  if (names.length <= 1) return names[0] ?? "Nobody";
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
 }
 
 function continueAfterRound(state) {
