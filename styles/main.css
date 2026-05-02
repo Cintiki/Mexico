@@ -68,9 +68,9 @@ input {
 }
 
 .game-logo {
-  align-self: end;
+  align-self: center;
   justify-self: center;
-  width: min(330px, 70%);
+  width: min(300px, 66%);
 }
 
 .setup-logo {
@@ -218,7 +218,7 @@ button:not(:disabled):hover {
 .play-area {
   min-width: 0;
   display: grid;
-  grid-template-rows: clamp(118px, 16vh, 170px) clamp(142px, 18vh, 190px) minmax(330px, 1fr) 86px;
+  grid-template-rows: clamp(150px, 19vh, 210px) clamp(132px, 17vh, 180px) minmax(330px, 1fr) 86px;
   align-items: stretch;
   gap: 8px;
   transform: none;
