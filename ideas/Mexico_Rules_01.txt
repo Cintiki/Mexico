@@ -1,0 +1,492 @@
+We are building a web-based version of the dice game Mexico with a custom coin, strike, sombrero, and “Ride the Bus” rule set.
+
+The game should be built around these exact rules.
+
+GAME OVERVIEW
+
+Mexico is a dice elimination game played with two six-sided dice.
+
+Players enter their names before the session starts.
+
+Each player begins the session with:
+
+- 3 coins
+- 0 strikes
+- Active status
+
+Each individual game costs 1 coin per player to enter.
+
+At the beginning of each game, every participating player pays 1 coin into the pot.
+
+Example:
+If 4 players enter the game, each pays 1 coin.
+The pot becomes 4 coins.
+The winner of that game collects the full pot.
+
+A player may only enter a new game if they have at least 1 coin.
+
+The overall session can continue as long as at least 2 players have enough coins to enter another game.
+
+The winner of an individual game is the last active player remaining.
+
+The winner collects the pot.
+
+CORE DICE SCORING
+
+The game uses two six-sided dice during normal play.
+
+Dice are read as a two-digit number, with the higher die first.
+
+Examples:
+
+6 and 5 = 65
+6 and 3 = 63
+5 and 4 = 54
+4 and 1 = 41
+3 and 1 = 31
+
+The special roll 2 and 1 is called Mexico.
+
+Mexico is the highest possible roll.
+
+The full ranking from highest to lowest is:
+
+1. Mexico / 21
+2. 66
+3. 55
+4. 44
+5. 33
+6. 22
+7. 11
+8. 65
+9. 64
+10. 63
+11. 62
+12. 61
+13. 54
+14. 53
+15. 52
+16. 51
+17. 43
+18. 42
+19. 41
+20. 32
+21. 31
+
+Important:
+A roll of 2 and 1 is not treated as the lowest number 21.
+It is treated as Mexico, the highest roll in the game.
+
+STARTING A NEW GAME
+
+At the beginning of a new game:
+
+1. All participating players pay 1 coin into the pot.
+2. Each participating player rolls one die.
+3. The player with the highest single-die roll starts the first round.
+4. If there is a tie for highest single-die roll, only the tied players roll one die again.
+5. Repeat until exactly one starting player is chosen.
+6. Play proceeds clockwise from that starting player.
+
+ROUND STRUCTURE
+
+Each round has a starting player.
+
+The starting player may roll two dice up to three times.
+
+The starting player may stop after:
+
+- 1 roll
+- 2 rolls
+- 3 rolls
+
+The number of rolls used by the starting player becomes the maximum number of rolls every other player may use during that round.
+
+Examples:
+
+If the starting player rolls once and stops, every other player gets only 1 roll.
+
+If the starting player rolls twice and stops, every other player may roll up to 2 times.
+
+If the starting player rolls three times, every other player may roll up to 3 times.
+
+Only the final roll counts.
+
+If a player chooses to roll again, they must roll both dice.
+
+Players cannot keep one die and re-roll the other.
+
+Every active player gets a turn in the round unless they have already been eliminated before their turn.
+
+ROUND WINNER AND ROUND LOSER
+
+After all active players have rolled for the round:
+
+- The highest final score is the round winner.
+- The lowest final score is the round loser.
+
+The round loser receives strikes.
+
+Normally, the round loser receives 1 strike.
+
+The round winner starts the next round.
+
+If there is a tie for lowest, resolve the tie using the tie-breaking rules below.
+
+If there is a tie for highest, resolve the tie using the tie-breaking rules below.
+
+TIE-BREAKING RULES
+
+All ties must be resolved using one die only.
+
+Normal two-dice Mexico scoring is not used for tie-breakers.
+
+Tie-breakers are handled with single-die rolls.
+
+Tie for first starting player:
+
+- Only the tied players roll one die.
+- Highest single-die roll wins.
+- If still tied, only the still-tied players roll one die again.
+- Repeat until exactly one player wins the tie.
+
+Tie for lowest roll:
+
+- Only the tied lowest players roll one die.
+- Lowest single-die roll loses the round.
+- If still tied, only the still-tied players roll one die again.
+- Repeat until exactly one loser is found.
+- The final loser receives the strike penalty from the round.
+
+Tie for highest roll:
+
+- Only the tied highest players roll one die.
+- Highest single-die roll wins the tie.
+- If still tied, only the still-tied players roll one die again.
+- Repeat until exactly one round winner is found.
+- The final winner starts the next round.
+
+No game may end with a shared winner.
+
+If any final tie affects who wins, who loses, who is eliminated, or who starts the next round, resolve it with one-die tie-breakers until there is exactly one result.
+
+MEXICO PENALTY
+
+Mexico is the roll 2 and 1.
+
+Each Mexico rolled during a round increases the strike penalty for the round loser.
+
+The Mexico penalty stacks by adding 2 strikes per Mexico rolled.
+
+Penalty table:
+
+- 0 Mexicos rolled in the round = loser receives 1 strike
+- 1 Mexico rolled in the round = loser receives 2 strikes
+- 2 Mexicos rolled in the round = loser receives 4 strikes
+- 3 Mexicos rolled in the round = loser receives 6 strikes
+- 4 Mexicos rolled in the round = loser receives 8 strikes
+
+The penalty is based on the number of Mexicos rolled during the round before tie-breaking.
+
+One-die tie-breaker rolls do not count as Mexico rolls.
+
+Tie-breaker rolls do not increase the Mexico penalty.
+
+Example:
+
+Four players are playing.
+
+Player 1 rolls Mexico.
+Player 2 rolls Mexico.
+Player 3 rolls Mexico.
+Player 4 rolls 65.
+
+Player 4 has the lowest score because Mexico beats every other roll.
+There were 3 Mexicos in the round.
+The penalty is 6 strikes.
+Player 4 receives 6 strikes and is eliminated immediately.
+
+STRIKES
+
+Each player starts each individual game with 0 strikes.
+
+A player is normally eliminated when they reaches 5 strikes.
+
+The strike limit is 5.
+
+RIDE THE BUS
+
+The first player in the game to reach exactly 5 strikes gets one final chance.
+
+This is called Riding the Bus.
+
+That player must wear the Sombrero.
+
+In the game UI, this player should have a visible “Sombrero” or “Riding the Bus” status.
+
+Only one player per game can Ride the Bus.
+
+When the first player reaches exactly 5 strikes:
+
+- They are not eliminated yet.
+- Their status becomes Riding the Bus.
+- They receive the Sombrero.
+- They remain active.
+- If they lose another round later, they are eliminated.
+
+Important:
+A player only gets to Ride the Bus if they are the first player to reach exactly 5 strikes.
+
+If a player jumps past 5 strikes because of a Mexico penalty, they are eliminated immediately and do not get to Ride the Bus.
+
+Example:
+
+Player has 4 strikes.
+They lose a normal round and receive 1 strike.
+They now have exactly 5 strikes.
+If no other player has already ridden the bus, this player now rides the bus.
+
+Example:
+
+Player has 4 strikes.
+They lose a round with 1 Mexico penalty and receive 2 strikes.
+They now have 6 strikes.
+They are eliminated immediately.
+They do not get to Ride the Bus.
+
+If a player reaches 5 strikes after another player has already received the Ride the Bus chance, they are eliminated immediately.
+
+Only the first exact 5-strike player gets the Ride the Bus chance.
+
+ELIMINATION RULES
+
+A player is eliminated if any of the following are true:
+
+1. They reach 5 strikes but another player has already received the Ride the Bus chance.
+2. They jump past 5 strikes because of a Mexico penalty.
+3. They are already Riding the Bus and lose another round.
+4. They are the final loser of a tie-breaker and the resulting strike penalty eliminates them.
+
+Eliminated players no longer roll in the current game.
+
+Eliminated players do not lose additional coins during that game.
+
+They keep any remaining coins for future games.
+
+NEXT ROUND STARTER
+
+The player with the highest final roll in a round starts the next round.
+
+If multiple players tie for highest final roll, resolve the tie with one-die tie-breakers.
+
+The winner of that one-die tie-breaker starts the next round.
+
+If the highest player is eliminated due to some edge case, the next starter should be determined from the remaining active players using a one-die roll-off.
+
+ENDING AN INDIVIDUAL GAME
+
+The game continues until only one active player remains.
+
+The last active player wins the game.
+
+The winner collects the full pot.
+
+Example:
+
+Four players enter a game.
+
+Each pays 1 coin.
+
+Pot = 4 coins.
+
+Adam wins the game.
+
+Adam collects 4 coins.
+
+If Adam had 2 coins after paying the entry fee, he now has 6 coins.
+
+SESSION CONTINUATION
+
+After a game ends:
+
+- Reset all strikes to 0.
+- Clear all eliminated statuses.
+- Clear Riding the Bus status.
+- Remove the Sombrero status.
+- Keep each player’s current coin count.
+- Players with at least 1 coin may enter the next game.
+- Players with 0 coins cannot enter the next game.
+
+The next game begins by collecting 1 coin from each participating player and rolling one die each to determine the first starting player.
+
+EDGE CASES
+
+If a penalty would eliminate multiple players at the same time, apply the strike and elimination rules first.
+
+If only one active player remains after eliminations, that player wins immediately.
+
+If multiple players remain, continue the game.
+
+If a tie affects elimination, resolve the tie with one-die rolls before applying the strike penalty.
+
+One-die tie-breaker rolls never count as normal Mexico rolls.
+
+One-die tie-breaker rolls never affect the Mexico penalty.
+
+All ties must be resolved to one clear player.
+
+There are no shared round winners.
+
+There are no shared round losers.
+
+There are no shared game winners.
+
+RECOMMENDED GAME STATE DATA
+
+Each player should have:
+
+- id
+- name
+- coins
+- strikes
+- isActive
+- isEliminated
+- isRidingBus
+- hasSombrero
+- currentRoll
+- currentRollRank
+- rollsUsedThisRound
+
+The game should track:
+
+- players
+- activePlayers
+- pot
+- currentGameNumber
+- currentRoundNumber
+- currentStarterPlayerId
+- currentTurnPlayerId
+- maxRollsThisRound
+- mexicoCountThisRound
+- roundRolls
+- roundWinnerId
+- roundLoserId
+- hasRideTheBusBeenUsed
+- rideTheBusPlayerId
+- gameWinnerId
+- sessionStatus
+- gameStatus
+
+RECOMMENDED GAME PHASES
+
+Use clear game phases:
+
+1. Player Entry
+2. Coin Buy-In
+3. Starting Roll-Off
+4. Round Start
+5. Player Rolling
+6. Round Resolution
+7. Tie-Breaker if Needed
+8. Apply Strikes
+9. Eliminate Players if Needed
+10. Check Game Winner
+11. Start Next Round
+12. End Game
+13. Start Next Game or End Session
+
+IMPORTANT IMPLEMENTATION NOTES
+
+Do not treat 21 as a normal low roll.
+
+21 is always Mexico and always the highest roll.
+
+Do not allow players to keep one die and re-roll the other.
+
+Do not count tie-breaker rolls as Mexico rolls.
+
+Do not apply two-dice scoring to tie-breakers.
+
+Do not allow unresolved ties.
+
+Do not allow more than one Ride the Bus player per game.
+
+Do not give Ride the Bus to a player who jumps from below 5 strikes to above 5 strikes.
+
+Do not reset coins between games.
+
+Do reset strikes between games.
+
+Do reset Riding the Bus and Sombrero status between games.
+
+CORE FUNCTION IDEAS
+
+Create a scoring function:
+
+scoreRoll(dieA, dieB)
+
+It should return:
+
+- display value
+- rank value
+- isMexico
+- isDouble
+
+Suggested rank values:
+
+31 = 1
+32 = 2
+41 = 3
+42 = 4
+43 = 5
+51 = 6
+52 = 7
+53 = 8
+54 = 9
+61 = 10
+62 = 11
+63 = 12
+64 = 13
+65 = 14
+11 = 15
+22 = 16
+33 = 17
+44 = 18
+55 = 19
+66 = 20
+Mexico / 21 = 21
+
+Create a function:
+
+calculateStrikePenalty(mexicoCountThisRound)
+
+Rules:
+
+if mexicoCountThisRound === 0:
+    penalty = 1
+else:
+    penalty = mexicoCountThisRound * 2
+
+Create a function:
+
+resolveTieWithOneDie(players, tieType)
+
+Rules:
+
+- Only tied players roll one die.
+- For lowest tie, lowest die loses.
+- For highest tie, highest die wins.
+- If tie remains, repeat with still-tied players.
+- Return exactly one player.
+
+Create a function:
+
+applyStrikePenalty(player, penalty)
+
+Rules:
+
+- Add penalty to player.strikes.
+- If player is already Riding the Bus and receives any new strike penalty, eliminate them.
+- If player.strikes === 5 and Ride the Bus has not been used, set player to Riding the Bus and give Sombrero.
+- If player.strikes === 5 and Ride the Bus has already been used, eliminate the player.
+- If player.strikes > 5, eliminate the player immediately.

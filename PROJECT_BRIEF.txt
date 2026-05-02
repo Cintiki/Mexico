@@ -1,0 +1,699 @@
+PROJECT: Mexico Dice Game — Sprite-Based Web Game
+
+We are building a web-based version of the dice game Mexico.
+
+The game should be built as a browser game using HTML, CSS, and JavaScript, or a modern web framework if already present in the project.
+
+The interface should use the supplied art assets and sprite sheets.
+
+The art style is black-and-white, hand-inked, vintage cartoon / arcade mascot style.
+
+Do not redesign the game visually.
+Do not create new character designs.
+Use the art assets exactly as provided.
+The UI boxes, buttons, panels, score rows, and input fields should be built with CSS, not image files.
+The supplied image assets are for branding, dice, character portraits, event cards, icons, props, and sprite animation.
+
+============================================================
+PROJECT ASSET ROOT
+============================================================
+
+All art files are stored under:
+
+E:\CodexWork\Mexico\assets\
+
+In code, treat paths as relative web paths:
+
+assets/branding/...
+assets/dice/...
+assets/events/...
+assets/icons/...
+assets/portraits/...
+assets/props/...
+assets/sprites/...
+
+All filenames are lowercase, use underscores, and end in .png.
+
+============================================================
+CHARACTERS
+============================================================
+
+There are always exactly 4 seats in every game.
+
+The selectable characters are:
+
+1. Jose
+Human character.
+Portrait: assets/portraits/portrait_jose.png
+Sprites folder: assets/sprites/jose/
+
+2. Pedro
+Skull-headed cowboy character.
+Portrait: assets/portraits/portrait_pedro.png
+Sprites folder: assets/sprites/pedro/
+
+3. Gomez
+Gomez is now a Chihuahua-style cartoon character, not a mouse or rat.
+Keep the name Gomez.
+Portrait: assets/portraits/portrait_gomez.png
+Sprites folder: assets/sprites/gomez/
+
+4. Jebuz
+Long-haired robe character.
+Portrait: assets/portraits/portrait_jebuz.png
+Sprites folder: assets/sprites/jebuz/
+
+Character naming rule:
+
+If a real player chooses Jose, Pedro, or Gomez, their entered player name replaces the default character name.
+
+Example:
+Player enters “Adam” and picks Pedro.
+Display name is “Adam”.
+
+If a real player chooses Jebuz, the display name becomes hyphenated with Jebuz.
+
+Example:
+Player enters “Steven” and picks Jebuz.
+Display name is “Steven-Jebuz”.
+
+NPC players use the character’s default name unless a real player occupies that seat.
+
+If fewer than 4 real players are entered, the remaining seats are filled by NPC players.
+
+NPC behavior:
+NPC players play automatically.
+Use assets/icons/icon_npc.png to mark NPC players if useful.
+The game should still feel like a full 4-player game even if only 1 real player is playing.
+
+============================================================
+VISUAL STYLE
+============================================================
+
+Overall look:
+- black-and-white hand-inked cartoon
+- off-white paper background
+- rounded thick black borders
+- bold cartoon display type for event text
+- clean readable UI
+- simple hand-drawn feel
+- no color except black, white, and gray tones already in the images
+
+CSS should handle:
+- buttons
+- panels
+- input boxes
+- selected borders
+- hover states
+- disabled states
+- scoreboard rows
+- player setup rows
+- roll/hold buttons
+- all layout spacing
+
+Suggested CSS visual direction:
+- off-white background
+- thick black borders
+- rounded corners
+- bold cartoon-like text
+- simple shadow offsets
+- high contrast
+- large readable controls
+- mobile-friendly responsive layout
+
+Use image assets for:
+- logos
+- dice faces
+- portraits
+- event title cards
+- icons
+- props
+- sprites
+
+Do not make image buttons unless absolutely necessary.
+
+============================================================
+SPRITE SYSTEM
+============================================================
+
+All sprite sheets are horizontal strips.
+
+Frame count is included in the filename:
+_4f = 4 frames
+_6f = 6 frames
+_8f = 8 frames
+_12f = 12 frames
+
+Static files marked _static are single-pose images, not animated strips.
+
+Sprite usage:
+
+Character idle:
+mexico_[character]_idle_4f.png
+
+Character victory:
+mexico_[character]_victory_8f.png
+
+Character lose:
+mexico_[character]_lose_6f.png
+
+Character out:
+mexico_[character]_out_static.png
+
+Ride the Bus state:
+mexico_[character]_bus_static.png
+
+Dice animation:
+assets/sprites/dice/mexico_dice_shake_hand_8f.png
+assets/sprites/dice/mexico_dice_throw_12f.png
+assets/sprites/dice/mexico_dice_bounce_12f.png
+
+Dice animation flow:
+1. Play shake hand sprite.
+2. Play throw hand sprite.
+3. Play bounce dice sprite.
+4. Stop animation.
+5. Display final roll using static dice faces from assets/dice/.
+
+Do not rely on the sprite animation to determine the dice result.
+The game logic determines the result.
+The final display must use the static dice face files:
+
+assets/dice/die_face_1.png
+assets/dice/die_face_2.png
+assets/dice/die_face_3.png
+assets/dice/die_face_4.png
+assets/dice/die_face_5.png
+assets/dice/die_face_6.png
+
+Sprite metadata:
+dice_shake_hand: 8 frames
+dice_throw: 12 frames
+dice_bounce: 12 frames
+character_idle: 4 frames
+character_victory: 8 frames
+character_lose: 6 frames
+character_out: static
+character_bus: static
+
+============================================================
+MAIN PROP
+============================================================
+
+Use this as the central dice rolling stage:
+
+assets/props/prop_dice_roll_area.png
+
+This is the dice tray / backboard rolling area.
+Place dice animations and final dice results over this prop.
+
+Other props:
+
+assets/props/prop_table_shadow.png
+Use under characters or icons if needed.
+
+assets/props/prop_coin_burst.png
+Use when a player wins the pot.
+
+assets/props/prop_sombrero_large.png
+Use for Ride the Bus emphasis if needed.
+
+assets/props/prop_dice_spark_lines.png
+Use behind dice or special rolls if needed.
+
+============================================================
+GAME FLOW / SCREENS
+============================================================
+
+Screen 1: Landing Page
+
+Show:
+- assets/branding/mexico_logo_main.png
+- centered “Play Now” button built with CSS
+- simple black-and-white layout
+
+User clicks Play Now to continue.
+
+Screen 2: Number of Players
+
+Ask:
+“How many players?”
+
+Options:
+1, 2, 3, 4
+
+There are always 4 seats in the game.
+This number only controls how many real players enter names.
+Remaining seats become NPC players.
+
+Screen 3: Player Setup
+
+For each real player:
+- enter player name
+- select one available character
+
+Use character portraits:
+assets/portraits/portrait_jose.png
+assets/portraits/portrait_pedro.png
+assets/portraits/portrait_gomez.png
+assets/portraits/portrait_jebuz.png
+
+Do not allow the same character to be picked twice by real players.
+
+After real players finish, fill remaining seats with NPC players using unchosen characters.
+
+Screen 4: Buy-In
+
+Each participating seat pays 1 coin into the pot.
+Each player starts the session with 3 coins.
+A player with 0 coins cannot enter the next game.
+
+Screen 5: Start Order Roll
+
+Before the first round, after each active player has added one coin to the pot, each player rolls ONE die to determine who starts.
+
+Highest one-die roll starts.
+If tied, only tied players roll one die again.
+Repeat until one starting player is determined.
+All ties must be resolved with one die.
+Then play proceeds clockwise from that starting player.
+
+Screen 6: Main Game Screen
+
+Must show:
+- small logo: assets/branding/mexico_logo_small.png
+- dice roll area prop: assets/props/prop_dice_roll_area.png
+- current player
+- roll / hold controls
+- current roll result
+- roll to beat
+- pot
+- each player row
+
+Each player row should show:
+- portrait
+- display name
+- coin count
+- strikes
+- NPC marker if NPC
+- out marker if eliminated
+- sombrero / bus marker if riding the bus
+
+Use these icons as needed:
+assets/icons/icon_coin.png
+assets/icons/icon_strike.png
+assets/icons/icon_pot.png
+assets/icons/icon_npc.png
+assets/icons/icon_out.png
+assets/icons/icon_sombrero_status.png
+assets/icons/icon_turn_marker.png
+
+Screen 7: Event Overlays
+
+Use these for important events:
+assets/events/event_mexico.png
+assets/events/event_ride_the_bus.png
+assets/events/event_player_out.png
+assets/events/event_round_winner.png
+assets/events/event_game_winner.png
+assets/events/event_session_champion.png
+assets/events/event_tiebreaker.png
+
+============================================================
+GAME RULES
+============================================================
+
+Always exactly 4 seats.
+
+Each player starts the overall session with 3 coins.
+
+Each individual game:
+- Every active player antes 1 coin into the pot at the start of the game.
+- If a player has 0 coins, they cannot enter another game.
+- The pot equals the sum of all antes for that game.
+- Winner of the game collects the pot.
+
+Strikes:
+- Each game uses 5 strikes.
+- A player who loses a round receives strikes.
+- The first player to reach exactly 5 strikes gets one final chance called “Ride the Bus”.
+- The Ride the Bus player wears the sombrero.
+- Use the character’s bus static sprite:
+  mexico_[character]_bus_static.png
+- Use event_ride_the_bus.png or icon_sombrero_status.png as status marker.
+- If that player loses again, that player is out.
+- Any later player who reaches 5 strikes is immediately out and does not get Ride the Bus.
+- Only the first player to reach 5 strikes in that game gets Ride the Bus.
+
+Important Ride the Bus rule:
+A player only gets to Ride the Bus if they are the first player to reach exactly 5 strikes.
+If a player jumps past 5 strikes because of a heavy Mexico penalty, they are eliminated immediately and do not get Ride the Bus.
+
+Example:
+Player has 4 strikes.
+They lose a normal round and receive 1 strike.
+They now have exactly 5 strikes.
+If nobody has used Ride the Bus yet, this player now rides the bus.
+
+Example:
+Player has 4 strikes.
+They lose a round with a 2-strike Mexico penalty.
+They now have 6 strikes.
+They are eliminated immediately.
+They do not get Ride the Bus.
+
+============================================================
+MEXICO PENALTY
+============================================================
+
+Mexico is the roll 2 and 1.
+
+If a Mexico roll, 2-1, is rolled during a round, the losing player receives 2 strikes instead of 1.
+
+Multiple Mexico rolls in the same round stack by +2 each time.
+
+Penalty table:
+0 Mexicos in round = loser takes 1 strike
+1 Mexico in round = loser takes 2 strikes
+2 Mexicos in round = loser takes 4 strikes
+3 Mexicos in round = loser takes 6 strikes
+4 Mexicos in round = loser takes 8 strikes
+
+It is possible for a player to be knocked out in the first round if enough Mexico rolls happen.
+
+Tie-breaker rolls do not count as Mexico rolls.
+One-die tie-breakers do not increase the Mexico penalty.
+
+============================================================
+ROUND RULES
+============================================================
+
+Each round has a starting player.
+
+The starting player may roll two dice up to three times.
+
+The starting player may stop after:
+- 1 roll
+- 2 rolls
+- 3 rolls
+
+The number of rolls used by the starting player becomes the maximum number of rolls every other player may use during that round.
+
+Examples:
+If the starting player rolls once and stops, every other player gets only 1 roll.
+If the starting player rolls twice and stops, every other player may roll up to 2 times.
+If the starting player rolls three times, every other player may roll up to 3 times.
+
+Only the final roll counts.
+
+If a player chooses to roll again, they must roll both dice.
+Players cannot keep one die and re-roll the other.
+
+After every active player has taken their turn:
+- highest final roll is the round winner
+- lowest final roll is the round loser
+- round loser receives strikes
+- round winner starts the next round
+
+If there is a tie for lowest, resolve with a one-die tiebreaker until only one loser remains.
+
+If there is a tie for highest, resolve with a one-die tiebreaker until only one winner remains.
+
+All ties must be resolved with one die.
+No shared round winners.
+No shared round losers.
+No shared game winners.
+
+============================================================
+DICE RANKING
+============================================================
+
+Use this ranking from strongest to weakest:
+
+1. Mexico = 2-1
+Highest roll.
+Also triggers Mexico penalty for the round.
+
+2. Doubles
+6-6 is highest double
+then 5-5
+then 4-4
+then 3-3
+then 2-2
+then 1-1
+
+3. Normal rolls
+Highest die first, lowest die second.
+
+Example:
+6-5 beats 6-4
+5-4 beats 5-3
+4-2 beats 3-2
+
+Important:
+Always sort normal roll dice high-to-low for comparison.
+But Mexico is specifically 2-1 and is the highest special roll.
+
+Suggested rank values:
+31 = 1
+32 = 2
+41 = 3
+42 = 4
+43 = 5
+51 = 6
+52 = 7
+53 = 8
+54 = 9
+61 = 10
+62 = 11
+63 = 12
+64 = 13
+65 = 14
+11 = 15
+22 = 16
+33 = 17
+44 = 18
+55 = 19
+66 = 20
+Mexico / 21 = 21
+
+Suggested roll value function:
+If dice are 2 and 1:
+  return rank 21, label "Mexico", isMexico true
+
+Else if dice are doubles:
+  return rank 14 + die value
+
+Else:
+  sort dice high-to-low
+  convert to two-digit value
+  use the rank table above
+
+Comparison:
+Mexico beats doubles.
+Doubles beat normal rolls.
+Within doubles, higher double wins.
+Within normal rolls, higher rank wins.
+
+============================================================
+TIEBREAKERS
+============================================================
+
+All ties are resolved with ONE die only.
+
+Normal two-dice Mexico scoring is not used for tie-breakers.
+
+Start order tie:
+- tied players roll one die
+- highest single-die roll wins
+- if still tied, repeat among tied players only
+
+Round loser tie:
+- tied lowest players roll one die
+- lowest single-die roll loses
+- if still tied, repeat among tied players only
+- final result must be one loser
+
+Round winner tie:
+- tied highest players roll one die
+- highest single-die roll wins
+- if still tied, repeat among tied players only
+- winner starts the next round
+
+Game winner tie or final ambiguity:
+- resolve with one die until only one winner remains
+
+Use:
+assets/events/event_tiebreaker.png
+assets/icons/icon_tiebreaker_die.png
+
+============================================================
+COIN / POT SYSTEM
+============================================================
+
+Each player starts the session with 3 coins.
+
+At the start of each game:
+- every participating player pays 1 coin into the pot
+- pot increases by 1 per participating player
+- if a player has 0 coins, they cannot participate in the next game
+
+At end of game:
+- last active player wins the game
+- winner collects full pot
+- add pot to winner coin count
+- set pot to 0
+- show assets/events/event_game_winner.png
+- show assets/props/prop_coin_burst.png if useful
+
+Session winner:
+- When only one player has coins remaining, they are the session champion.
+- Show assets/events/event_session_champion.png.
+
+============================================================
+NPC / AUTO PLAY
+============================================================
+
+NPC players should use simple readable logic.
+
+Suggested NPC behavior:
+- Roll at least once.
+- If NPC is first player, NPC may randomly hold after 1, 2, or 3 rolls.
+- If chasing a current best roll:
+  - If NPC beats the current best roll, hold.
+  - If not and rolls remain, continue.
+  - If out of rolls, stop.
+- Use short pauses between NPC actions so the player can follow what happened.
+- Use dice animation for NPC rolls too.
+
+============================================================
+UI BEHAVIOR
+============================================================
+
+Buttons:
+- Roll
+- Hold
+- Continue
+- Next Round
+- Next Game
+- End Session
+- Restart Session
+
+Roll button:
+- disabled when player has no rolls left
+- disabled during animation
+- disabled for NPC while auto-playing
+
+Hold button:
+- enabled after at least one roll
+- disabled during animation
+- disabled for NPC while auto-playing
+
+During dice roll:
+- play shake/throw/bounce sequence
+- show final static dice faces
+- update current roll value
+
+After every round:
+- show round winner
+- show losing player and strikes gained
+- if Mexico penalty applies, clearly show extra strikes
+- if Ride the Bus triggered, show event_ride_the_bus.png
+- if player out, show event_player_out.png
+
+============================================================
+IMPLEMENTATION NOTES
+============================================================
+
+Build asset constants in one place.
+
+Example character data structure:
+
+characters = {
+  jose: {
+    id: "jose",
+    defaultName: "Jose",
+    portrait: "assets/portraits/portrait_jose.png",
+    sprites: {
+      idle: "assets/sprites/jose/mexico_jose_idle_4f.png",
+      victory: "assets/sprites/jose/mexico_jose_victory_8f.png",
+      lose: "assets/sprites/jose/mexico_jose_lose_6f.png",
+      out: "assets/sprites/jose/mexico_jose_out_static.png",
+      bus: "assets/sprites/jose/mexico_jose_bus_static.png"
+    }
+  },
+  pedro: {
+    id: "pedro",
+    defaultName: "Pedro",
+    portrait: "assets/portraits/portrait_pedro.png",
+    sprites: {
+      idle: "assets/sprites/pedro/mexico_pedro_idle_4f.png",
+      victory: "assets/sprites/pedro/mexico_pedro_victory_8f.png",
+      lose: "assets/sprites/pedro/mexico_pedro_lose_6f.png",
+      out: "assets/sprites/pedro/mexico_pedro_out_static.png",
+      bus: "assets/sprites/pedro/mexico_pedro_bus_static.png"
+    }
+  },
+  gomez: {
+    id: "gomez",
+    defaultName: "Gomez",
+    note: "Gomez is a Chihuahua character.",
+    portrait: "assets/portraits/portrait_gomez.png",
+    sprites: {
+      idle: "assets/sprites/gomez/mexico_gomez_idle_4f.png",
+      victory: "assets/sprites/gomez/mexico_gomez_victory_8f.png",
+      lose: "assets/sprites/gomez/mexico_gomez_lose_6f.png",
+      out: "assets/sprites/gomez/mexico_gomez_out_static.png",
+      bus: "assets/sprites/gomez/mexico_gomez_bus_static.png"
+    }
+  },
+  jebuz: {
+    id: "jebuz",
+    defaultName: "Jebuz",
+    portrait: "assets/portraits/portrait_jebuz.png",
+    sprites: {
+      idle: "assets/sprites/jebuz/mexico_jebuz_idle_4f.png",
+      victory: "assets/sprites/jebuz/mexico_jebuz_victory_8f.png",
+      lose: "assets/sprites/jebuz/mexico_jebuz_lose_6f.png",
+      out: "assets/sprites/jebuz/mexico_jebuz_out_static.png",
+      bus: "assets/sprites/jebuz/mexico_jebuz_bus_static.png"
+    }
+  }
+}
+
+Dice faces:
+diceFaces = {
+  1: "assets/dice/die_face_1.png",
+  2: "assets/dice/die_face_2.png",
+  3: "assets/dice/die_face_3.png",
+  4: "assets/dice/die_face_4.png",
+  5: "assets/dice/die_face_5.png",
+  6: "assets/dice/die_face_6.png"
+}
+
+Sprite frame helper:
+- Assume horizontal strip.
+- Use frame count from filename or define manually.
+- Use CSS background-position or canvas drawing.
+- For first version, CSS sprite animation is fine.
+
+============================================================
+GOAL FOR FIRST BUILD
+============================================================
+
+Make a working playable version first.
+
+Priority:
+1. Correct game rules.
+2. Correct turn order.
+3. Correct dice ranking.
+4. Correct tiebreakers.
+5. Correct 5-strike system.
+6. Correct Ride the Bus behavior.
+7. Correct coin/pot system.
+8. Use the art assets in the right places.
+9. Add sprite animation once the logic is stable.
+
+Do not overcomplicate the first pass.
+Do not build unnecessary extra systems.
+Keep the code readable and easy to modify.

@@ -1,0 +1,430 @@
+ASSET MANIFEST — Mexico Dice Game
+
+This file lists all art assets for the Mexico web game.
+
+All art files are stored under:
+
+E:\CodexWork\Mexico\assets\
+
+In code, use relative web paths starting with:
+
+assets/
+
+All filenames are lowercase.
+All filenames use underscores.
+All image files are PNG.
+
+============================================================
+FOLDER STRUCTURE
+============================================================
+
+assets/
+  branding/
+  dice/
+  events/
+  icons/
+  portraits/
+  props/
+  sprites/
+    dice/
+    jose/
+    pedro/
+    gomez/
+    jebuz/
+
+============================================================
+BRANDING
+============================================================
+
+Folder:
+assets/branding/
+
+Files:
+
+assets/branding/mexico_logo_main.png
+Purpose:
+Main logo for the landing page.
+Large sombrero / Mexico title branding.
+
+assets/branding/mexico_logo_small.png
+Purpose:
+Smaller logo for game header and secondary screens.
+
+============================================================
+STATIC DICE FACES
+============================================================
+
+Folder:
+assets/dice/
+
+Files:
+
+assets/dice/die_face_1.png
+Purpose:
+Static die face showing 1.
+
+assets/dice/die_face_2.png
+Purpose:
+Static die face showing 2.
+
+assets/dice/die_face_3.png
+Purpose:
+Static die face showing 3.
+
+assets/dice/die_face_4.png
+Purpose:
+Static die face showing 4.
+
+assets/dice/die_face_5.png
+Purpose:
+Static die face showing 5.
+
+assets/dice/die_face_6.png
+Purpose:
+Static die face showing 6.
+
+Notes:
+Use these to display final dice results after the roll animation.
+Do not use the animated dice sprite to determine the actual dice result.
+The game logic determines the roll result, then displays these static dice faces.
+
+============================================================
+EVENT CARDS
+============================================================
+
+Folder:
+assets/events/
+
+Files:
+
+assets/events/event_mexico.png
+Purpose:
+Event card / badge for a Mexico roll.
+
+assets/events/event_ride_the_bus.png
+Purpose:
+Event card / badge when a player enters Ride the Bus state.
+
+assets/events/event_player_out.png
+Purpose:
+Event card / badge when a player is eliminated.
+
+assets/events/event_round_winner.png
+Purpose:
+Event card / badge when a round winner is announced.
+
+assets/events/event_game_winner.png
+Purpose:
+Event card / badge when the game winner is announced.
+
+assets/events/event_session_champion.png
+Purpose:
+Event card / badge when the overall session champion is announced.
+
+assets/events/event_tiebreaker.png
+Purpose:
+Event card / badge when a one-die tiebreaker is required.
+
+============================================================
+ICONS
+============================================================
+
+Folder:
+assets/icons/
+
+Files:
+
+assets/icons/icon_coin.png
+Purpose:
+Small coin icon for player coin counts.
+
+assets/icons/icon_strike.png
+Purpose:
+Small strike icon / tally mark for strikes.
+
+assets/icons/icon_sombrero_status.png
+Purpose:
+Small sombrero status icon for Ride the Bus.
+
+assets/icons/icon_pot.png
+Purpose:
+Small icon for the game pot.
+
+assets/icons/icon_npc.png
+Purpose:
+Small icon showing that a player is computer-controlled.
+
+assets/icons/icon_out.png
+Purpose:
+Small icon showing that a player is eliminated.
+
+assets/icons/icon_tiebreaker_die.png
+Purpose:
+Small icon for one-die tiebreaker moments.
+
+assets/icons/icon_turn_marker.png
+Purpose:
+Small icon or marker showing the current active player.
+
+============================================================
+PORTRAITS
+============================================================
+
+Folder:
+assets/portraits/
+
+Files:
+
+assets/portraits/portrait_jose.png
+Purpose:
+Jose portrait for character select, scoreboard, and player row.
+
+assets/portraits/portrait_pedro.png
+Purpose:
+Pedro portrait for character select, scoreboard, and player row.
+
+assets/portraits/portrait_gomez.png
+Purpose:
+Gomez portrait for character select, scoreboard, and player row.
+Important:
+Gomez is now a Chihuahua-style cartoon character, not a mouse or rat.
+
+assets/portraits/portrait_jebuz.png
+Purpose:
+Jebuz portrait for character select, scoreboard, and player row.
+
+============================================================
+PROPS
+============================================================
+
+Folder:
+assets/props/
+
+Files:
+
+assets/props/prop_dice_roll_area.png
+Purpose:
+Main dice rolling tray / backboard area.
+Use this as the central stage for dice animations and final dice results.
+
+assets/props/prop_table_shadow.png
+Purpose:
+Reusable shadow under characters, props, icons, or reward elements.
+
+assets/props/prop_coin_burst.png
+Purpose:
+Coin burst / reward prop for pot payout and game winner moments.
+
+assets/props/prop_sombrero_large.png
+Purpose:
+Large sombrero prop for Ride the Bus emphasis.
+
+assets/props/prop_dice_spark_lines.png
+Purpose:
+Decorative spark / impact lines behind dice, special rolls, or Mexico moments.
+
+============================================================
+DICE SPRITES
+============================================================
+
+Folder:
+assets/sprites/dice/
+
+Files:
+
+assets/sprites/dice/mexico_dice_shake_hand_8f.png
+Purpose:
+8-frame horizontal sprite sheet showing hand shaking dice.
+
+assets/sprites/dice/mexico_dice_throw_12f.png
+Purpose:
+12-frame horizontal sprite sheet showing hand throwing dice.
+
+assets/sprites/dice/mexico_dice_bounce_12f.png
+Purpose:
+12-frame horizontal sprite sheet showing dice bouncing / rolling.
+
+Notes:
+Use these as visual animation only.
+The actual dice values are decided by game logic.
+After animation, show static dice faces from assets/dice/.
+
+============================================================
+JOSE SPRITES
+============================================================
+
+Folder:
+assets/sprites/jose/
+
+Files:
+
+assets/sprites/jose/mexico_jose_idle_4f.png
+Purpose:
+4-frame horizontal idle sprite sheet.
+
+assets/sprites/jose/mexico_jose_victory_8f.png
+Purpose:
+8-frame horizontal victory sprite sheet.
+
+assets/sprites/jose/mexico_jose_lose_6f.png
+Purpose:
+6-frame horizontal losing reaction sprite sheet.
+
+assets/sprites/jose/mexico_jose_out_static.png
+Purpose:
+Static eliminated / out pose.
+
+assets/sprites/jose/mexico_jose_bus_static.png
+Purpose:
+Static Ride the Bus pose with sombrero.
+
+============================================================
+PEDRO SPRITES
+============================================================
+
+Folder:
+assets/sprites/pedro/
+
+Files:
+
+assets/sprites/pedro/mexico_pedro_idle_4f.png
+Purpose:
+4-frame horizontal idle sprite sheet.
+
+assets/sprites/pedro/mexico_pedro_victory_8f.png
+Purpose:
+8-frame horizontal victory sprite sheet.
+
+assets/sprites/pedro/mexico_pedro_lose_6f.png
+Purpose:
+6-frame horizontal losing reaction sprite sheet.
+
+assets/sprites/pedro/mexico_pedro_out_static.png
+Purpose:
+Static eliminated / out pose.
+
+assets/sprites/pedro/mexico_pedro_bus_static.png
+Purpose:
+Static Ride the Bus pose with sombrero.
+
+============================================================
+GOMEZ SPRITES
+============================================================
+
+Folder:
+assets/sprites/gomez/
+
+Important:
+Gomez is now a Chihuahua-style cartoon character.
+Gomez is not a mouse.
+Gomez is not a rat.
+Keep the name Gomez.
+
+Files:
+
+assets/sprites/gomez/mexico_gomez_idle_4f.png
+Purpose:
+4-frame horizontal idle sprite sheet.
+
+assets/sprites/gomez/mexico_gomez_victory_8f.png
+Purpose:
+8-frame horizontal victory sprite sheet.
+
+assets/sprites/gomez/mexico_gomez_lose_6f.png
+Purpose:
+6-frame horizontal losing reaction sprite sheet.
+
+assets/sprites/gomez/mexico_gomez_out_static.png
+Purpose:
+Static eliminated / out pose.
+
+assets/sprites/gomez/mexico_gomez_bus_static.png
+Purpose:
+Static Ride the Bus pose with sombrero.
+
+============================================================
+JEBUZ SPRITES
+============================================================
+
+Folder:
+assets/sprites/jebuz/
+
+Files:
+
+assets/sprites/jebuz/mexico_jebuz_idle_4f.png
+Purpose:
+4-frame horizontal idle sprite sheet.
+
+assets/sprites/jebuz/mexico_jebuz_victory_8f.png
+Purpose:
+8-frame horizontal victory sprite sheet.
+
+assets/sprites/jebuz/mexico_jebuz_lose_6f.png
+Purpose:
+6-frame horizontal losing reaction sprite sheet.
+
+assets/sprites/jebuz/mexico_jebuz_out_static.png
+Purpose:
+Static eliminated / out pose.
+
+assets/sprites/jebuz/mexico_jebuz_bus_static.png
+Purpose:
+Static Ride the Bus pose with sombrero.
+
+============================================================
+SPRITE FRAME RULES
+============================================================
+
+All sprite sheets are horizontal strips.
+
+Frame counts are included in filenames:
+
+_4f = 4 frames
+_6f = 6 frames
+_8f = 8 frames
+_12f = 12 frames
+
+Files ending in _static are single-image static poses.
+
+Suggested animation usage:
+
+Idle:
+loop slowly.
+
+Victory:
+play when player wins a round or game.
+
+Lose:
+play when player loses a round.
+
+Out:
+show when player is eliminated.
+
+Bus:
+show when player is Riding the Bus.
+
+Dice shake / throw / bounce:
+play during roll animation, then show final static dice faces.
+
+============================================================
+CODING NOTES
+============================================================
+
+Use these image paths exactly as listed.
+
+Do not assume missing assets.
+Do not rename assets in code.
+Do not generate new character art.
+Do not replace Gomez with a rat or mouse.
+Gomez is a Chihuahua.
+
+Build UI boxes, buttons, panels, selected states, disabled states, and scoreboard rows with CSS.
+
+Use images for:
+- logos
+- portraits
+- dice faces
+- icons
+- props
+- event cards
+- sprite sheets
