@@ -97,7 +97,7 @@ function preGame(state, dispatch) {
       draft.screen = "start-order";
       draft.phase = "start-order";
     }) })
-    : h("button", "big-button", { text: "Resolve Start Roll", onClick: () => dispatch(resolveStartOrder) });
+    : h("button", "big-button", { text: "Start Rolling", onClick: () => dispatch(resolveStartOrder) });
   return board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: state.screen === "buy-in" ? "Buy-In" : "Start Order Roll" }),
