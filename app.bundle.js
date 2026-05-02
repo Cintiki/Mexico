@@ -371,6 +371,8 @@ function resolveStartOrder(state) {
 
 function beginStartOrder(state) {
   const active = [...state.game.activeSeatIds];
+  state.overlay = null;
+  state.overlayQueue = [];
   state.startOrder = {
     ...freshStartOrder(),
     phase: "rolling",
@@ -611,7 +613,9 @@ function settleStartOrderRound(state) {
     startOrder.queue = [...tiedGroup.ids];
     startOrder.rolls = {};
     startOrder.message = `${names} battle for placement.`;
-    pushOverlay(state, "tiebreaker", "Order Tiebreaker", `${names} roll again for placement.`);
+    state.overlay = null;
+    state.overlayQueue = [];
+    addLog(state, `Order tiebreaker: ${names}.`);
     return;
   }
 
@@ -893,8 +897,8 @@ function orderDie(state, seat) {
   const die = isRolling ? state.startOrder.cycleDie : state.startOrder.displayRolls[seat.seatIndex];
   const className = `order-die ${isRolling ? "is-rolling" : ""} ${die ? "" : "is-empty"}`;
   return h("div", className, die
-    ? h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
-    : h("span", "", { text: "-" }));
+    ? h("img", "order-die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
+    : "");
 }
 
 function orderRowStatusText(state, seat) {

@@ -146,8 +146,8 @@ function orderDie(state, seat) {
   const die = isRolling ? state.startOrder.cycleDie : state.startOrder.displayRolls[seat.seatIndex];
   const className = `order-die ${isRolling ? "is-rolling" : ""} ${die ? "" : "is-empty"}`;
   return h("div", className, die
-    ? h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
-    : h("span", "", { text: "-" }));
+    ? h("img", "order-die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
+    : "");
 }
 
 function orderRowStatusText(state, seat) {

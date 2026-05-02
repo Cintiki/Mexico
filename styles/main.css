@@ -455,7 +455,7 @@ button:not(:disabled):hover {
 }
 
 .order-layout {
-  width: min(980px, 90%);
+  width: min(1060px, 92%);
   display: block;
 }
 
@@ -466,8 +466,8 @@ button:not(:disabled):hover {
 
 .order-row-wrap {
   display: grid;
-  grid-template-columns: 170px 76px minmax(430px, 1fr) 104px;
-  gap: 14px;
+  grid-template-columns: 170px 76px minmax(480px, 1fr) 104px;
+  gap: 16px;
   align-items: center;
 }
 
@@ -489,26 +489,32 @@ button:not(:disabled):hover {
 .order-die {
   display: grid;
   place-items: center;
-  min-height: 86px;
+  width: 104px;
+  height: 86px;
+  line-height: 0;
 }
 
-.order-die .die-face {
+.order-die-face {
+  display: block;
   width: 88px;
+  height: 88px;
+  object-fit: contain;
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.28));
 }
 
-.order-die.is-rolling .die-face {
+.order-die.is-rolling .order-die-face {
   animation: die-pop 0.14s steps(1, end) infinite;
 }
 
 .order-die.is-empty {
-  font-size: 0;
-  font-weight: 900;
+  visibility: hidden;
 }
 
 .order-row-wrap .player-row {
-  grid-template-columns: 62px minmax(150px, 1fr) 48px 42px 58px;
+  grid-template-columns: 62px minmax(180px, 1fr) 48px 42px 58px;
   min-height: 82px;
   padding: 7px 10px;
+  border-width: 4px;
 }
 
 .order-row-wrap .player-meta strong {

@@ -97,6 +97,8 @@ export function resolveStartOrder(state) {
 
 export function beginStartOrder(state) {
   const active = [...state.game.activeSeatIds];
+  state.overlay = null;
+  state.overlayQueue = [];
   state.startOrder = {
     ...freshStartOrder(),
     phase: "rolling",
@@ -337,7 +339,9 @@ function settleStartOrderRound(state) {
     startOrder.queue = [...tiedGroup.ids];
     startOrder.rolls = {};
     startOrder.message = `${names} battle for placement.`;
-    pushOverlay(state, "tiebreaker", "Order Tiebreaker", `${names} roll again for placement.`);
+    state.overlay = null;
+    state.overlayQueue = [];
+    addLog(state, `Order tiebreaker: ${names}.`);
     return;
   }
 
