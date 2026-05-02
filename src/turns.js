@@ -312,9 +312,11 @@ function eliminatePlayer(state, seat) {
 }
 
 function finishGame(state, winner) {
-  winner.coins += state.game.pot;
   const payout = state.game.pot;
+  winner.coins += payout;
   state.game.pot = 0;
+  state.game.lastPayout = payout;
+  state.game.winnerSeatId = winner.seatIndex;
   winner.spriteState = "victory";
   state.screen = "game-winner";
   state.phase = "game-winner";

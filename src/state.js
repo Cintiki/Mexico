@@ -57,6 +57,8 @@ export function freshGame() {
     currentBest: null,
     awaitingNextRound: false,
     pendingAutoHoldSeatId: null,
+    lastPayout: 0,
+    winnerSeatId: null,
   };
 }
 

@@ -213,6 +213,8 @@ function freshGame() {
     currentBest: null,
     awaitingNextRound: false,
     pendingAutoHoldSeatId: null,
+    lastPayout: 0,
+    winnerSeatId: null,
   };
 }
 
@@ -587,9 +589,11 @@ function eliminatePlayer(state, seat) {
 }
 
 function finishGame(state, winner) {
-  winner.coins += state.game.pot;
   const payout = state.game.pot;
+  winner.coins += payout;
   state.game.pot = 0;
+  state.game.lastPayout = payout;
+  state.game.winnerSeatId = winner.seatIndex;
   winner.spriteState = "victory";
   state.screen = "game-winner";
   state.phase = "game-winner";
@@ -1047,7 +1051,10 @@ function rollToBeat(state) {
 }
 
 function potBox(state) {
-  return h("div", "pot-box", {}, h("img", "icon", { src: ASSETS.icons.pot, alt: "" }), h("span", "", { text: `The Pot ${state.game.pot}` }));
+  const text = state.screen === "game-winner"
+    ? `Pot Won ${state.game.lastPayout}`
+    : `The Pot ${state.game.pot}`;
+  return h("div", "pot-box", {}, h("img", "icon", { src: ASSETS.icons.pot, alt: "" }), h("span", "", { text }));
 }
 
 function scoreboard(state) {
@@ -1110,6 +1117,11 @@ function eventFeature(state) {
     feature.classList.add("winner-feature");
     feature.append(h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }));
     if (winner) feature.append(characterSprite(winner));
+    feature.append(h("div", "winner-pot",
+      {},
+      h("span", "", { text: "Pot Winner" }),
+      h("strong", "", { text: `${state.game.lastPayout} coins` }),
+    ));
     feature.append(h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }));
   } else {
     feature.append(h("img", "event-card large", { src: asset, alt: "" }));
@@ -1118,7 +1130,8 @@ function eventFeature(state) {
 }
 
 function gameWinnerSeat(state) {
-  return state.seats.find((seat) => seat.spriteState === "victory" && !seat.isOut)
+  return state.seats.find((seat) => seat.seatIndex === state.game.winnerSeatId)
+    ?? state.seats.find((seat) => seat.spriteState === "victory" && !seat.isOut)
     ?? [...state.seats].sort((a, b) => b.coins - a.coins)[0];
 }
 

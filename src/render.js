@@ -268,7 +268,10 @@ function rollToBeat(state) {
 }
 
 function potBox(state) {
-  return h("div", "pot-box", {}, h("img", "icon", { src: ASSETS.icons.pot, alt: "" }), h("span", "", { text: `The Pot ${state.game.pot}` }));
+  const text = state.screen === "game-winner"
+    ? `Pot Won ${state.game.lastPayout}`
+    : `The Pot ${state.game.pot}`;
+  return h("div", "pot-box", {}, h("img", "icon", { src: ASSETS.icons.pot, alt: "" }), h("span", "", { text }));
 }
 
 function scoreboard(state) {
@@ -331,6 +334,11 @@ function eventFeature(state) {
     feature.classList.add("winner-feature");
     feature.append(h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }));
     if (winner) feature.append(characterSprite(winner));
+    feature.append(h("div", "winner-pot",
+      {},
+      h("span", "", { text: "Pot Winner" }),
+      h("strong", "", { text: `${state.game.lastPayout} coins` }),
+    ));
     feature.append(h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }));
   } else {
     feature.append(h("img", "event-card large", { src: asset, alt: "" }));
@@ -339,7 +347,8 @@ function eventFeature(state) {
 }
 
 function gameWinnerSeat(state) {
-  return state.seats.find((seat) => seat.spriteState === "victory" && !seat.isOut)
+  return state.seats.find((seat) => seat.seatIndex === state.game.winnerSeatId)
+    ?? state.seats.find((seat) => seat.spriteState === "victory" && !seat.isOut)
     ?? [...state.seats].sort((a, b) => b.coins - a.coins)[0];
 }
 

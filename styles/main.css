@@ -708,7 +708,7 @@ button:not(:disabled):hover {
 }
 
 .winner-logo {
-  width: min(430px, 86%);
+  width: min(520px, 92%);
   align-self: center;
   margin: -18px auto 0;
 }
@@ -716,7 +716,7 @@ button:not(:disabled):hover {
 .winner-tray {
   width: min(560px, 100%);
   align-self: start;
-  margin-top: 8px;
+  margin-top: -4px;
 }
 
 .winner-feature .character-sprite {
@@ -727,9 +727,30 @@ button:not(:disabled):hover {
 
 .coin-burst {
   position: absolute;
-  width: min(190px, 34%);
+  width: min(210px, 36%);
   right: 8%;
-  bottom: 18px;
+  bottom: 34px;
+}
+
+.winner-pot {
+  position: absolute;
+  left: 36%;
+  bottom: 82px;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 2px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.winner-pot span {
+  font-size: clamp(24px, 2.8vw, 42px);
+}
+
+.winner-pot strong {
+  font-size: clamp(18px, 2vw, 30px);
 }
 
 .bottom-actions {
