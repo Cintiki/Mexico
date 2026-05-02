@@ -249,11 +249,11 @@ button:not(:disabled):hover {
 }
 
 .character-sprite.is-animated {
-  animation: sprite-walk 0.9s steps(var(--frames)) infinite;
+  animation: sprite-walk 0.9s steps(calc(var(--frames) - 1)) infinite;
 }
 
 .dice-sprite.is-animated {
-  animation: sprite-walk 0.7s steps(var(--frames)) 1;
+  animation: sprite-walk 0.7s steps(calc(var(--frames) - 1)) 1;
 }
 
 .character-sprite.is-static {
@@ -265,7 +265,7 @@ button:not(:disabled):hover {
     background-position: 0 0;
   }
   to {
-    background-position: 100% 0;
+    background-position: calc(100% * var(--frames) / (var(--frames) - 1)) 0;
   }
 }
 
@@ -289,8 +289,18 @@ button:not(:disabled):hover {
 .bottom-actions {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+.roll-limit-note {
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font-size: 20px;
+  font-weight: 900;
 }
 
 .info-box,
@@ -346,7 +356,7 @@ button:not(:disabled):hover {
 
 .player-row {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 54px 64px;
+  grid-template-columns: 58px minmax(0, 1fr) 54px 52px 64px;
   gap: 8px;
   min-height: 78px;
   align-items: center;
@@ -394,6 +404,7 @@ button:not(:disabled):hover {
 }
 
 .roll-text,
+.strike-text,
 .coin-text {
   font-weight: 900;
   font-size: 20px;
@@ -513,7 +524,7 @@ button:not(:disabled):hover {
   }
 
   .player-row {
-    grid-template-columns: 48px minmax(0, 1fr) 42px 56px;
+    grid-template-columns: 48px minmax(0, 1fr) 42px 42px 56px;
   }
 
   .final-dice {

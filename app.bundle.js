@@ -369,8 +369,8 @@ function startRound(state, starterId) {
 function rollCurrentPlayer(state) {
   const seat = currentSeat(state);
   if (!seat || seat.isOut || state.dice.isAnimating) return;
-  const limit = seat.seatIndex === state.game.startingSeatId ? 3 : state.game.maxRollsThisRound;
-  if (limit !== null && seat.turnRollsUsed >= limit) return;
+  const limit = rollLimitFor(state, seat);
+  if (seat.turnRollsUsed >= limit) return;
 
   const dice = rollTwoDice();
   const score = scoreTwoDice(dice);
@@ -405,6 +405,7 @@ function holdCurrentPlayer(state) {
   if (!seat || !seat.lastRoll) return;
   if (seat.seatIndex === state.game.startingSeatId && state.game.maxRollsThisRound === null) {
     state.game.maxRollsThisRound = seat.turnRollsUsed;
+    addLog(state, `${seat.displayName} sets this round to ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
   }
   advanceTurn(state);
 }
@@ -552,6 +553,11 @@ function activeSeats(state) {
 
 function currentSeat(state) {
   return seatById(state, state.game.currentSeatId);
+}
+
+function rollLimitFor(state, seat) {
+  if (seat.seatIndex === state.game.startingSeatId) return 3;
+  return state.game.maxRollsThisRound ?? 1;
 }
 
 function seatById(state, seatIndex) {
@@ -733,6 +739,8 @@ function characterSprite(seat) {
 
 function controls(state, dispatch) {
   const seat = state.seats.find((item) => item.seatIndex === state.game.currentSeatId);
+  const limit = seat ? displayRollLimitFor(state, seat) : 0;
+  const rollLimitReached = Boolean(seat) && seat.turnRollsUsed >= limit;
   const disabled = !seat || seat.isNpc || state.phase !== "round-turn";
   const canHold = !disabled && Boolean(seat.lastRoll);
   const wrap = h("div", "controls");
@@ -740,7 +748,8 @@ function controls(state, dispatch) {
     wrap.append(h("button", "big-button", { text: "Next Round", onClick: () => dispatch(continueAfterRound) }));
     return wrap;
   }
-  wrap.append(h("button", "game-button", { text: "Roll", disabled, onClick: () => dispatch(rollCurrentPlayer) }));
+  if (seat) wrap.append(h("span", "roll-limit-note", { text: `Rolls: ${seat.turnRollsUsed}/${limit}` }));
+  wrap.append(h("button", "game-button", { text: "Roll", disabled: disabled || rollLimitReached, onClick: () => dispatch(rollCurrentPlayer) }));
   wrap.append(h("button", "game-button", { text: "Hold", disabled: !canHold, onClick: () => dispatch(holdCurrentPlayer) }));
   if (seat?.isNpc) wrap.append(h("button", "game-button", { text: "NPC Step", onClick: () => dispatch(runNpcStep) }));
   return wrap;
@@ -778,8 +787,14 @@ function playerRow(state, seat) {
   meta.append(status);
   row.append(meta);
   row.append(h("span", "roll-text", { text: seat.lastRoll ? `${seat.lastRoll.label}/${seat.turnRollsUsed}` : "-" }));
+  row.append(h("span", "strike-text", { text: seat.strikes ? "|".repeat(seat.strikes) : "0" }));
   row.append(h("span", "coin-text", { text: `${seat.coins}x` }, h("img", "mini-icon", { src: ASSETS.icons.coin, alt: "coins" })));
   return row;
+}
+
+function displayRollLimitFor(state, seat) {
+  if (seat.seatIndex === state.game.startingSeatId) return 3;
+  return state.game.maxRollsThisRound ?? 1;
 }
 
 function overlay(state, dispatch) {

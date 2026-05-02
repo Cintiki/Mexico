@@ -115,8 +115,8 @@ export function startRound(state, starterId) {
 export function rollCurrentPlayer(state) {
   const seat = currentSeat(state);
   if (!seat || seat.isOut || state.dice.isAnimating) return;
-  const limit = seat.seatIndex === state.game.startingSeatId ? 3 : state.game.maxRollsThisRound;
-  if (limit !== null && seat.turnRollsUsed >= limit) return;
+  const limit = rollLimitFor(state, seat);
+  if (seat.turnRollsUsed >= limit) return;
 
   const dice = rollTwoDice();
   const score = scoreTwoDice(dice);
@@ -151,6 +151,7 @@ export function holdCurrentPlayer(state) {
   if (!seat || !seat.lastRoll) return;
   if (seat.seatIndex === state.game.startingSeatId && state.game.maxRollsThisRound === null) {
     state.game.maxRollsThisRound = seat.turnRollsUsed;
+    addLog(state, `${seat.displayName} sets this round to ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
   }
   advanceTurn(state);
 }
@@ -298,6 +299,11 @@ function activeSeats(state) {
 
 function currentSeat(state) {
   return seatById(state, state.game.currentSeatId);
+}
+
+function rollLimitFor(state, seat) {
+  if (seat.seatIndex === state.game.startingSeatId) return 3;
+  return state.game.maxRollsThisRound ?? 1;
 }
 
 function seatById(state, seatIndex) {
