@@ -579,23 +579,25 @@ button:not(:disabled):hover {
 }
 
 .winner-feature {
-  min-height: 590px;
-  grid-template-rows: auto 1fr;
+  min-height: 430px;
+  align-content: start;
 }
 
-.winner-card {
-  width: min(410px, 84%);
-  align-self: start;
+.winner-logo {
+  width: min(430px, 86%);
+  align-self: center;
+  margin: -18px auto 0;
 }
 
 .winner-tray {
   width: min(560px, 100%);
-  align-self: end;
+  align-self: start;
+  margin-top: 8px;
 }
 
 .winner-feature .character-sprite {
   left: 14%;
-  bottom: 14px;
+  bottom: 24px;
   width: min(250px, 46%);
 }
 

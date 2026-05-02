@@ -725,8 +725,12 @@ function preGame(state, dispatch) {
 function gameBoard(state, dispatch) {
   const shell = h("section", "game-board");
   const left = h("div", "play-area");
-  left.append(h("img", "logo-small game-logo", { src: ASSETS.branding.small, alt: "Mexico" }));
-  if (state.screen !== "game-winner") left.append(h("h1", "turn-title", { text: titleFor(state) }));
+  if (state.screen === "game-winner") {
+    left.append(h("img", "event-card winner-logo", { src: ASSETS.events.gameWinner, alt: "Game winner" }));
+  } else {
+    left.append(h("img", "logo-small game-logo", { src: ASSETS.branding.small, alt: "Mexico" }));
+    left.append(h("h1", "turn-title", { text: titleFor(state) }));
+  }
   if (state.screen === "game-winner" || state.screen === "session-champion") {
     left.append(eventFeature(state));
   } else {
@@ -870,7 +874,6 @@ function eventFeature(state) {
   if (state.screen === "game-winner") {
     const winner = gameWinnerSeat(state);
     feature.classList.add("winner-feature");
-    feature.append(h("img", "event-card winner-card", { src: asset, alt: "Game winner" }));
     feature.append(h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }));
     if (winner) feature.append(characterSprite(winner));
     feature.append(h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }));
