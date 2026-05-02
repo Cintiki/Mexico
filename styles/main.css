@@ -281,6 +281,10 @@ button:not(:disabled):hover {
   animation-name: sprite-8;
 }
 
+.frame-count-9.is-animated .sprite-strip {
+  animation-name: sprite-9;
+}
+
 .frame-count-12.is-animated .sprite-strip {
   animation-name: sprite-12;
 }
@@ -310,6 +314,18 @@ button:not(:disabled):hover {
   62.5%, 74.99% { transform: translateX(-62.5%); }
   75%, 87.49% { transform: translateX(-75%); }
   87.5%, 100% { transform: translateX(-87.5%); }
+}
+
+@keyframes sprite-9 {
+  0%, 11.10% { transform: translateX(0); }
+  11.11%, 22.21% { transform: translateX(-11.1111%); }
+  22.22%, 33.32% { transform: translateX(-22.2222%); }
+  33.33%, 44.43% { transform: translateX(-33.3333%); }
+  44.44%, 55.54% { transform: translateX(-44.4444%); }
+  55.55%, 66.65% { transform: translateX(-55.5556%); }
+  66.66%, 77.76% { transform: translateX(-66.6667%); }
+  77.77%, 88.87% { transform: translateX(-77.7778%); }
+  88.88%, 100% { transform: translateX(-88.8889%); }
 }
 
 @keyframes sprite-12 {
