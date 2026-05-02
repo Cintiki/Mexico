@@ -244,10 +244,11 @@ button:not(:disabled):hover {
 
 .dice-sprite {
   position: absolute;
-  right: 7%;
-  bottom: 66px;
-  height: min(178px, 54%);
+  left: 50%;
+  bottom: 48px;
+  height: min(210px, 64%);
   aspect-ratio: var(--sprite-ratio);
+  transform: translateX(-10%);
   z-index: 2;
 }
 
@@ -352,16 +353,17 @@ button:not(:disabled):hover {
 
 .final-dice {
   position: absolute;
-  right: 9%;
-  bottom: 86px;
+  left: 50%;
+  bottom: 83px;
+  transform: translateX(-11%);
   display: flex;
-  gap: 14px;
+  gap: 18px;
   align-items: center;
   z-index: 3;
 }
 
 .die-face {
-  width: clamp(58px, 8vw, 86px);
+  width: clamp(66px, 8.5vw, 94px);
   aspect-ratio: 1;
   object-fit: contain;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.3));
