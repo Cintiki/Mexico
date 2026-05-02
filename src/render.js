@@ -131,30 +131,29 @@ function startOrderBoard(state) {
     const seat = state.seats.find((item) => item.seatIndex === seatId);
     if (!seat) return;
     list.append(h("div", "order-row-wrap",
+      h("span", "order-row-status", { text: orderRowStatusText(state, seat) }),
       h("span", "order-rank", { text: `#${index + 1}` }),
       playerRow(state, seat),
       orderDie(state, seat),
     ));
   });
-  wrap.append(h("div", "order-status", { text: orderStatusText(state) }));
   wrap.append(list);
   return wrap;
 }
 
 function orderDie(state, seat) {
   const isRolling = state.startOrder.rollingSeatId === seat.seatIndex;
-  const die = isRolling ? state.startOrder.cycleDie : state.startOrder.rolls[seat.seatIndex];
+  const die = isRolling ? state.startOrder.cycleDie : state.startOrder.displayRolls[seat.seatIndex];
   const className = `order-die ${isRolling ? "is-rolling" : ""} ${die ? "" : "is-empty"}`;
   return h("div", className, die
     ? h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
     : h("span", "", { text: "-" }));
 }
 
-function orderStatusText(state) {
-  if (state.startOrder.rollingSeatId !== null) return "Rolling";
-  if (state.startOrder.isComplete) return "Ready";
-  if (state.startOrder.phase === "rolling") return "Waiting";
-  return "Ready";
+function orderRowStatusText(state, seat) {
+  if (state.startOrder.rollingSeatId === seat.seatIndex) return "Rolling";
+  if (state.startOrder.phase === "rolling" && state.startOrder.queue[0] === seat.seatIndex) return "Waiting";
+  return "";
 }
 
 function gameBoard(state, dispatch) {

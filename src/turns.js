@@ -130,6 +130,7 @@ export function stepStartOrder(state) {
 
   const finalDie = rollOneDie();
   startOrder.rolls[startOrder.rollingSeatId] = finalDie;
+  startOrder.displayRolls[startOrder.rollingSeatId] = finalDie;
   startOrder.cycleDie = finalDie;
   addLog(state, `${seatById(state, startOrder.rollingSeatId).displayName} rolled ${finalDie} for order.`);
   startOrder.rollingSeatId = null;

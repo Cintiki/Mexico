@@ -33,13 +33,14 @@ input {
 .board,
 .game-board {
   width: min(96vw, 1760px, calc((100vh - 44px) * 1.42));
-  min-height: min(calc(100vh - 44px), 1240px, calc(96vw / 1.42));
+  height: min(calc(100vh - 44px), 1240px, calc(96vw / 1.42));
   background: var(--panel);
   border: 5px solid var(--ink);
   border-radius: 8px;
   box-shadow: var(--shadow);
   padding: clamp(24px, 3.2vw, 58px);
   position: relative;
+  overflow: hidden;
 }
 
 .board {
@@ -54,8 +55,6 @@ input {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 34%);
   gap: clamp(22px, 4vw, 72px);
-  height: min(calc(100vh - 44px), 1240px, calc(96vw / 1.42));
-  overflow: hidden;
 }
 
 .logo-main {
@@ -456,18 +455,8 @@ button:not(:disabled):hover {
 }
 
 .order-layout {
-  width: min(880px, 86%);
-  display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
-  gap: 22px;
-  align-items: center;
-}
-
-.order-status {
-  font-size: clamp(38px, 4.1vw, 70px);
-  font-weight: 900;
-  line-height: 1;
-  text-align: right;
+  width: min(980px, 90%);
+  display: block;
 }
 
 .order-list {
@@ -477,9 +466,17 @@ button:not(:disabled):hover {
 
 .order-row-wrap {
   display: grid;
-  grid-template-columns: 76px minmax(430px, 1fr) 104px;
-  gap: 16px;
+  grid-template-columns: 170px 76px minmax(430px, 1fr) 104px;
+  gap: 14px;
   align-items: center;
+}
+
+.order-row-status {
+  min-height: 1em;
+  font-size: clamp(28px, 3.1vw, 54px);
+  font-weight: 900;
+  line-height: 1;
+  text-align: right;
 }
 
 .order-rank {
@@ -504,7 +501,7 @@ button:not(:disabled):hover {
 }
 
 .order-die.is-empty {
-  font-size: 44px;
+  font-size: 0;
   font-weight: 900;
 }
 
@@ -521,6 +518,23 @@ button:not(:disabled):hover {
 @keyframes die-pop {
   0%, 100% { transform: rotate(-3deg) scale(1); }
   50% { transform: rotate(4deg) scale(1.06); }
+}
+
+.board:has(.order-layout) {
+  justify-content: center;
+  gap: clamp(18px, 2.5vh, 32px);
+}
+
+.board:has(.order-layout) .setup-logo {
+  width: min(230px, 28%);
+}
+
+.board:has(.order-layout) .screen-title {
+  font-size: clamp(42px, 4.2vw, 72px);
+}
+
+.board:has(.order-layout) .screen-copy {
+  min-height: 1.25em;
 }
 
 .player-row {

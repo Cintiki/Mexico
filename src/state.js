@@ -67,6 +67,7 @@ export function freshStartOrder() {
     lockedIds: [],
     tailIds: [],
     rolls: {},
+    displayRolls: {},
     order: [],
     rollingSeatId: null,
     rollStartedAt: 0,
