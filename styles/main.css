@@ -456,15 +456,15 @@ button:not(:disabled):hover {
 }
 
 .order-layout {
-  width: min(720px, 86%);
+  width: min(880px, 86%);
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 22px;
   align-items: center;
 }
 
 .order-status {
-  font-size: clamp(40px, 4.5vw, 72px);
+  font-size: clamp(38px, 4.1vw, 70px);
   font-weight: 900;
   line-height: 1;
   text-align: right;
@@ -477,8 +477,8 @@ button:not(:disabled):hover {
 
 .order-row-wrap {
   display: grid;
-  grid-template-columns: 82px minmax(0, 1fr) 104px;
-  gap: 14px;
+  grid-template-columns: 76px minmax(430px, 1fr) 104px;
+  gap: 16px;
   align-items: center;
 }
 
@@ -506,6 +506,16 @@ button:not(:disabled):hover {
 .order-die.is-empty {
   font-size: 44px;
   font-weight: 900;
+}
+
+.order-row-wrap .player-row {
+  grid-template-columns: 62px minmax(150px, 1fr) 48px 42px 58px;
+  min-height: 82px;
+  padding: 7px 10px;
+}
+
+.order-row-wrap .player-meta strong {
+  font-size: 22px;
 }
 
 @keyframes die-pop {
