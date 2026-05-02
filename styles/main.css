@@ -215,6 +215,7 @@ button:not(:disabled):hover {
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
+  transform: translateY(-56px);
 }
 
 .side-panel {
@@ -384,6 +385,12 @@ button:not(:disabled):hover {
 .controls {
   min-height: 116px;
   align-content: flex-start;
+}
+
+.controls .game-button {
+  min-height: 50px;
+  padding: 8px 18px;
+  font-size: 22px;
 }
 
 .roll-limit-note {
@@ -612,6 +619,10 @@ button:not(:disabled):hover {
 
   .side-panel {
     order: 2;
+  }
+
+  .play-area {
+    transform: none;
   }
 
   .setup-row {
