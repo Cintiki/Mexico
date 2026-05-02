@@ -62,10 +62,10 @@ function setup(state, dispatch) {
     row.append(h("input", "name-input", {
       value: state.setup.names[index],
       placeholder: "Enter name",
-      onInput: (event) => dispatch((draft) => {
-        draft.setup.names[index] = event.target.value;
-        draft.setup.errors[index] = "";
-      }),
+      onInput: (event) => {
+        state.setup.names[index] = event.target.value;
+        state.setup.errors[index] = "";
+      },
     }));
     const picks = h("div", "portrait-grid");
     CHARACTER_ORDER.forEach((id) => {
