@@ -279,15 +279,20 @@ function applyStrikePenalty(state, loser, strikeGain) {
     return;
   }
   loser.strikes += strikeGain;
-  if (loser.strikes === 5 && !state.game.busUsed) {
-    loser.isRidingBus = true;
-    loser.spriteState = "bus";
+  if (loser.strikes < 5) return;
+
+  if (!state.game.busUsed) {
     state.game.busUsed = true;
     state.game.busSeatId = loser.seatIndex;
-    pushOverlay(state, "rideBus", "Riding the Bus!", `${loser.displayName} gets one more chance.`);
-  } else if (loser.strikes >= 5) {
-    eliminatePlayer(state, loser);
+    if (loser.strikes === 5) {
+      loser.isRidingBus = true;
+      loser.spriteState = "bus";
+      pushOverlay(state, "rideBus", "Riding the Bus!", `${loser.displayName} gets one more chance.`);
+      return;
+    }
   }
+
+  eliminatePlayer(state, loser);
 }
 
 function formatNameList(names) {
