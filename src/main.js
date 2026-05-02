@@ -1,23 +1,26 @@
 import { preloadAssets } from "./assets.js";
 import { createState } from "./state.js";
 import { render } from "./render.js";
-import { holdCurrentPlayer, runNpcStep } from "./turns.js";
+import { holdCurrentPlayer, runNpcStep, stepStartOrder } from "./turns.js";
 
 const state = createState();
 preloadAssets();
 let npcTimer = null;
 let diceTimer = null;
 let autoHoldTimer = null;
+let startOrderTimer = null;
 
 function dispatch(mutator) {
   mutator(state);
   render(state, dispatch);
   scheduleDiceSettle();
   scheduleAutoHold();
+  scheduleStartOrder();
   scheduleNpc();
 }
 
 render(state, dispatch);
+scheduleStartOrder();
 scheduleNpc();
 
 function scheduleNpc() {
@@ -47,5 +50,12 @@ function scheduleAutoHold() {
       draft.game.pendingAutoHoldSeatId = null;
       holdCurrentPlayer(draft);
     }), 1100);
+  }
+}
+
+function scheduleStartOrder() {
+  clearTimeout(startOrderTimer);
+  if (state.screen === "start-order" && state.startOrder.phase === "rolling" && !state.overlay) {
+    startOrderTimer = setTimeout(() => dispatch(stepStartOrder), 120);
   }
 }

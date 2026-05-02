@@ -2,6 +2,7 @@ import { ASSETS, CHARACTERS, CHARACTER_ORDER } from "./assets.js";
 import { spriteStyle } from "./sprites.js";
 import {
   continueAfterRound,
+  beginStartOrder,
   prepareNextGame,
   resolveStartOrder,
   rollCurrentPlayer,
@@ -92,6 +93,7 @@ function setup(state, dispatch) {
 }
 
 function preGame(state, dispatch) {
+  if (state.screen === "start-order") return startOrderScreen(state, dispatch);
   const action = state.screen === "buy-in"
     ? h("button", "big-button", { text: "Roll for Start", onClick: () => dispatch((draft) => {
       draft.screen = "start-order";
@@ -105,6 +107,54 @@ function preGame(state, dispatch) {
     scoreboard(state),
     action,
   );
+}
+
+function startOrderScreen(state, dispatch) {
+  const startOrder = state.startOrder;
+  const action = startOrder.isComplete
+    ? h("button", "big-button", { text: "Continue", onClick: () => dispatch(resolveStartOrder) })
+    : h("button", "big-button", { text: "Start Rolling", disabled: startOrder.phase === "rolling", onClick: () => dispatch(beginStartOrder) });
+  return board(
+    h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
+    h("h1", "screen-title", { text: startOrder.isComplete ? "Roll Order" : "Start Order Roll" }),
+    h("p", "screen-copy", { text: startOrder.message || "Each active player rolls one die. Highest starts." }),
+    startOrderBoard(state),
+    action,
+  );
+}
+
+function startOrderBoard(state) {
+  const wrap = h("div", "order-layout");
+  const list = h("div", "order-list");
+  const order = state.startOrder.order.length ? state.startOrder.order : state.game.activeSeatIds;
+  order.forEach((seatId, index) => {
+    const seat = state.seats.find((item) => item.seatIndex === seatId);
+    if (!seat) return;
+    list.append(h("div", "order-row-wrap",
+      h("span", "order-rank", { text: `#${index + 1}` }),
+      playerRow(state, seat),
+      orderDie(state, seat),
+    ));
+  });
+  wrap.append(h("div", "order-status", { text: orderStatusText(state) }));
+  wrap.append(list);
+  return wrap;
+}
+
+function orderDie(state, seat) {
+  const isRolling = state.startOrder.rollingSeatId === seat.seatIndex;
+  const die = isRolling ? state.startOrder.cycleDie : state.startOrder.rolls[seat.seatIndex];
+  const className = `order-die ${isRolling ? "is-rolling" : ""} ${die ? "" : "is-empty"}`;
+  return h("div", className, die
+    ? h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
+    : h("span", "", { text: "-" }));
+}
+
+function orderStatusText(state) {
+  if (state.startOrder.rollingSeatId !== null) return "Rolling";
+  if (state.startOrder.isComplete) return "Ready";
+  if (state.startOrder.phase === "rolling") return "Waiting";
+  return "Ready";
 }
 
 function gameBoard(state, dispatch) {

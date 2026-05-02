@@ -181,6 +181,7 @@ function createState() {
       joinedGame: true,
     })),
     game: freshGame(),
+    startOrder: freshStartOrder(),
     dice: {
       isAnimating: false,
       animationStage: null,
@@ -211,6 +212,23 @@ function freshGame() {
     currentBest: null,
     awaitingNextRound: false,
     pendingAutoHoldSeatId: null,
+  };
+}
+
+function freshStartOrder() {
+  return {
+    phase: "ready",
+    candidates: [],
+    queue: [],
+    lockedIds: [],
+    tailIds: [],
+    rolls: {},
+    order: [],
+    rollingSeatId: null,
+    rollStartedAt: 0,
+    cycleDie: 1,
+    message: "Ready to roll.",
+    isComplete: false,
   };
 }
 
@@ -317,6 +335,7 @@ function prepareNextGame(state) {
   }
 
   state.game = freshGame();
+  state.startOrder = freshStartOrder();
   state.seats.forEach((seat) => {
     seat.strikes = 0;
     seat.isOut = false;
@@ -337,20 +356,65 @@ function prepareNextGame(state) {
 }
 
 function resolveStartOrder(state) {
-  const winner = resolveOneDieTie(state, state.game.activeSeatIds, "high", "starts the game", "Start order tiebreaker");
+  if (!state.startOrder.isComplete) return;
+  const orderedIds = state.startOrder.order.length ? state.startOrder.order : state.game.activeSeatIds;
+  const winner = orderedIds[0];
   state.game.startingSeatId = winner;
   state.game.currentSeatId = winner;
-  state.game.turnOrder = clockwiseOrder(state, winner);
+  state.game.turnOrder = orderedIds;
   startRound(state, winner);
   state.screen = "game";
   state.phase = "round-turn";
   addLog(state, `${seatById(state, winner).displayName} starts the first round.`);
 }
 
+function beginStartOrder(state) {
+  const active = [...state.game.activeSeatIds];
+  state.startOrder = {
+    ...freshStartOrder(),
+    phase: "rolling",
+    candidates: active,
+    queue: [...active],
+    tailIds: [],
+    order: active,
+    message: "Rolling for order.",
+  };
+}
+
+function stepStartOrder(state) {
+  const startOrder = state.startOrder;
+  if (state.screen !== "start-order" || startOrder.phase !== "rolling" || startOrder.isComplete) return;
+
+  if (startOrder.rollingSeatId === null) {
+    const nextSeatId = startOrder.queue.shift();
+    if (nextSeatId === undefined) {
+      settleStartOrderRound(state);
+      return;
+    }
+    startOrder.rollingSeatId = nextSeatId;
+    startOrder.rollStartedAt = Date.now();
+    startOrder.cycleDie = rollOneDie();
+    startOrder.message = `${seatById(state, nextSeatId).displayName} rolling...`;
+    return;
+  }
+
+  startOrder.cycleDie = rollOneDie();
+  if (Date.now() - startOrder.rollStartedAt < 850) return;
+
+  const finalDie = rollOneDie();
+  startOrder.rolls[startOrder.rollingSeatId] = finalDie;
+  startOrder.cycleDie = finalDie;
+  addLog(state, `${seatById(state, startOrder.rollingSeatId).displayName} rolled ${finalDie} for order.`);
+  startOrder.rollingSeatId = null;
+  startOrder.rollStartedAt = 0;
+  updateStartOrderDisplay(state);
+}
+
 function startRound(state, starterId) {
+  const baseOrder = state.game.turnOrder.length ? state.game.turnOrder : clockwiseOrder(state, starterId);
   state.game.startingSeatId = starterId;
   state.game.currentSeatId = starterId;
-  state.game.turnOrder = clockwiseOrder(state, starterId);
+  state.game.turnOrder = rotateActiveOrder(state, baseOrder, starterId);
   state.game.turnIndex = 0;
   state.game.maxRollsThisRound = null;
   state.game.roundRolls = {};
@@ -527,6 +591,64 @@ function finishGame(state, winner) {
   addLog(state, `${winner.displayName} wins the game and collects ${payout} coins.`);
 }
 
+function settleStartOrderRound(state) {
+  const startOrder = state.startOrder;
+  const groups = groupStartOrderCandidates(startOrder.candidates, startOrder.rolls);
+  const tiedGroup = groups.find((group) => group.ids.length > 1);
+
+  if (tiedGroup) {
+    const names = tiedGroup.ids.map((seatId) => seatById(state, seatId).displayName).join(" and ");
+    const lockedIds = groups
+      .slice(0, groups.indexOf(tiedGroup))
+      .flatMap((group) => group.ids);
+    startOrder.lockedIds = [...startOrder.lockedIds, ...lockedIds];
+    startOrder.tailIds = groups
+      .slice(groups.indexOf(tiedGroup) + 1)
+      .flatMap((group) => group.ids);
+    startOrder.candidates = tiedGroup.ids;
+    startOrder.queue = [...tiedGroup.ids];
+    startOrder.rolls = {};
+    startOrder.message = `${names} battle for placement.`;
+    pushOverlay(state, "tiebreaker", "Order Tiebreaker", `${names} roll again for placement.`);
+    return;
+  }
+
+  startOrder.order = [
+    ...startOrder.lockedIds,
+    ...groups.flatMap((group) => group.ids),
+    ...startOrder.tailIds,
+  ];
+  startOrder.phase = "complete";
+  startOrder.isComplete = true;
+  startOrder.message = `${seatById(state, startOrder.order[0]).displayName} goes first.`;
+  addLog(state, `Start order: ${startOrder.order.map((seatId) => seatById(state, seatId).displayName).join(", ")}.`);
+}
+
+function updateStartOrderDisplay(state) {
+  const startOrder = state.startOrder;
+  const groups = groupStartOrderCandidates(startOrder.candidates, startOrder.rolls);
+  startOrder.order = [
+    ...startOrder.lockedIds,
+    ...groups.flatMap((group) => group.ids),
+    ...startOrder.candidates.filter((seatId) => startOrder.rolls[seatId] === undefined),
+    ...startOrder.tailIds,
+  ];
+}
+
+function groupStartOrderCandidates(seatIds, rolls) {
+  const rolled = seatIds
+    .filter((seatId) => rolls[seatId] !== undefined)
+    .sort((a, b) => rolls[b] - rolls[a]);
+  const groups = [];
+  rolled.forEach((seatId) => {
+    const die = rolls[seatId];
+    const group = groups.find((item) => item.die === die);
+    if (group) group.ids.push(seatId);
+    else groups.push({ die, ids: [seatId] });
+  });
+  return groups;
+}
+
 function resolveOneDieTie(state, seatIds, highOrLow, reason, title = "Tiebreaker") {
   let tied = [...seatIds];
   while (tied.length > 1) {
@@ -577,6 +699,15 @@ function clockwiseOrder(state, starterId) {
     .filter((seat) => seat.joinedGame && !seat.isOut)
     .sort((a, b) => ((a.seatIndex - starterId + 4) % 4) - ((b.seatIndex - starterId + 4) % 4))
     .map((seat) => seat.seatIndex);
+}
+
+function rotateActiveOrder(state, order, starterId) {
+  const active = order.filter((seatId) => {
+    const seat = seatById(state, seatId);
+    return seat?.joinedGame && !seat.isOut;
+  });
+  const startIndex = Math.max(0, active.indexOf(starterId));
+  return [...active.slice(startIndex), ...active.slice(0, startIndex)];
 }
 
 function activeSeats(state) {
@@ -707,6 +838,7 @@ function setup(state, dispatch) {
 }
 
 function preGame(state, dispatch) {
+  if (state.screen === "start-order") return startOrderScreen(state, dispatch);
   const action = state.screen === "buy-in"
     ? h("button", "big-button", { text: "Roll for Start", onClick: () => dispatch((draft) => {
       draft.screen = "start-order";
@@ -720,6 +852,54 @@ function preGame(state, dispatch) {
     scoreboard(state),
     action,
   );
+}
+
+function startOrderScreen(state, dispatch) {
+  const startOrder = state.startOrder;
+  const action = startOrder.isComplete
+    ? h("button", "big-button", { text: "Continue", onClick: () => dispatch(resolveStartOrder) })
+    : h("button", "big-button", { text: "Start Rolling", disabled: startOrder.phase === "rolling", onClick: () => dispatch(beginStartOrder) });
+  return board(
+    h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
+    h("h1", "screen-title", { text: startOrder.isComplete ? "Roll Order" : "Start Order Roll" }),
+    h("p", "screen-copy", { text: startOrder.message || "Each active player rolls one die. Highest starts." }),
+    startOrderBoard(state),
+    action,
+  );
+}
+
+function startOrderBoard(state) {
+  const wrap = h("div", "order-layout");
+  const list = h("div", "order-list");
+  const order = state.startOrder.order.length ? state.startOrder.order : state.game.activeSeatIds;
+  order.forEach((seatId, index) => {
+    const seat = state.seats.find((item) => item.seatIndex === seatId);
+    if (!seat) return;
+    list.append(h("div", "order-row-wrap",
+      h("span", "order-rank", { text: `#${index + 1}` }),
+      playerRow(state, seat),
+      orderDie(state, seat),
+    ));
+  });
+  wrap.append(h("div", "order-status", { text: orderStatusText(state) }));
+  wrap.append(list);
+  return wrap;
+}
+
+function orderDie(state, seat) {
+  const isRolling = state.startOrder.rollingSeatId === seat.seatIndex;
+  const die = isRolling ? state.startOrder.cycleDie : state.startOrder.rolls[seat.seatIndex];
+  const className = `order-die ${isRolling ? "is-rolling" : ""} ${die ? "" : "is-empty"}`;
+  return h("div", className, die
+    ? h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })
+    : h("span", "", { text: "-" }));
+}
+
+function orderStatusText(state) {
+  if (state.startOrder.rollingSeatId !== null) return "Rolling";
+  if (state.startOrder.isComplete) return "Ready";
+  if (state.startOrder.phase === "rolling") return "Waiting";
+  return "Ready";
 }
 
 function gameBoard(state, dispatch) {
@@ -959,16 +1139,19 @@ preloadAssets();
 let npcTimer = null;
 let diceTimer = null;
 let autoHoldTimer = null;
+let startOrderTimer = null;
 
 function dispatch(mutator) {
   mutator(state);
   render(state, dispatch);
   scheduleDiceSettle();
   scheduleAutoHold();
+  scheduleStartOrder();
   scheduleNpc();
 }
 
 render(state, dispatch);
+scheduleStartOrder();
 scheduleNpc();
 
 function scheduleNpc() {
@@ -998,6 +1181,13 @@ function scheduleAutoHold() {
       draft.game.pendingAutoHoldSeatId = null;
       holdCurrentPlayer(draft);
     }), 1100);
+  }
+}
+
+function scheduleStartOrder() {
+  clearTimeout(startOrderTimer);
+  if (state.screen === "start-order" && state.startOrder.phase === "rolling" && !state.overlay) {
+    startOrderTimer = setTimeout(() => dispatch(stepStartOrder), 120);
   }
 }
 

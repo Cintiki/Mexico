@@ -1,5 +1,5 @@
 import { CHARACTER_ORDER, CHARACTERS } from "./assets.js";
-import { addLog, freshGame } from "./state.js";
+import { addLog, freshGame, freshStartOrder } from "./state.js";
 import { chooseStarterRollTarget, shouldNpcRollAgain } from "./npc.js";
 import { describeStrikeGain, rollOneDie, rollTwoDice, scoreTwoDice, tiedByScore } from "./scoring.js";
 
@@ -62,6 +62,7 @@ export function prepareNextGame(state) {
   }
 
   state.game = freshGame();
+  state.startOrder = freshStartOrder();
   state.seats.forEach((seat) => {
     seat.strikes = 0;
     seat.isOut = false;
@@ -82,20 +83,65 @@ export function prepareNextGame(state) {
 }
 
 export function resolveStartOrder(state) {
-  const winner = resolveOneDieTie(state, state.game.activeSeatIds, "high", "starts the game", "Start order tiebreaker");
+  if (!state.startOrder.isComplete) return;
+  const orderedIds = state.startOrder.order.length ? state.startOrder.order : state.game.activeSeatIds;
+  const winner = orderedIds[0];
   state.game.startingSeatId = winner;
   state.game.currentSeatId = winner;
-  state.game.turnOrder = clockwiseOrder(state, winner);
+  state.game.turnOrder = orderedIds;
   startRound(state, winner);
   state.screen = "game";
   state.phase = "round-turn";
   addLog(state, `${seatById(state, winner).displayName} starts the first round.`);
 }
 
+export function beginStartOrder(state) {
+  const active = [...state.game.activeSeatIds];
+  state.startOrder = {
+    ...freshStartOrder(),
+    phase: "rolling",
+    candidates: active,
+    queue: [...active],
+    tailIds: [],
+    order: active,
+    message: "Rolling for order.",
+  };
+}
+
+export function stepStartOrder(state) {
+  const startOrder = state.startOrder;
+  if (state.screen !== "start-order" || startOrder.phase !== "rolling" || startOrder.isComplete) return;
+
+  if (startOrder.rollingSeatId === null) {
+    const nextSeatId = startOrder.queue.shift();
+    if (nextSeatId === undefined) {
+      settleStartOrderRound(state);
+      return;
+    }
+    startOrder.rollingSeatId = nextSeatId;
+    startOrder.rollStartedAt = Date.now();
+    startOrder.cycleDie = rollOneDie();
+    startOrder.message = `${seatById(state, nextSeatId).displayName} rolling...`;
+    return;
+  }
+
+  startOrder.cycleDie = rollOneDie();
+  if (Date.now() - startOrder.rollStartedAt < 850) return;
+
+  const finalDie = rollOneDie();
+  startOrder.rolls[startOrder.rollingSeatId] = finalDie;
+  startOrder.cycleDie = finalDie;
+  addLog(state, `${seatById(state, startOrder.rollingSeatId).displayName} rolled ${finalDie} for order.`);
+  startOrder.rollingSeatId = null;
+  startOrder.rollStartedAt = 0;
+  updateStartOrderDisplay(state);
+}
+
 export function startRound(state, starterId) {
+  const baseOrder = state.game.turnOrder.length ? state.game.turnOrder : clockwiseOrder(state, starterId);
   state.game.startingSeatId = starterId;
   state.game.currentSeatId = starterId;
-  state.game.turnOrder = clockwiseOrder(state, starterId);
+  state.game.turnOrder = rotateActiveOrder(state, baseOrder, starterId);
   state.game.turnIndex = 0;
   state.game.maxRollsThisRound = null;
   state.game.roundRolls = {};
@@ -272,6 +318,64 @@ function finishGame(state, winner) {
   addLog(state, `${winner.displayName} wins the game and collects ${payout} coins.`);
 }
 
+function settleStartOrderRound(state) {
+  const startOrder = state.startOrder;
+  const groups = groupStartOrderCandidates(startOrder.candidates, startOrder.rolls);
+  const tiedGroup = groups.find((group) => group.ids.length > 1);
+
+  if (tiedGroup) {
+    const names = tiedGroup.ids.map((seatId) => seatById(state, seatId).displayName).join(" and ");
+    const lockedIds = groups
+      .slice(0, groups.indexOf(tiedGroup))
+      .flatMap((group) => group.ids);
+    startOrder.lockedIds = [...startOrder.lockedIds, ...lockedIds];
+    startOrder.tailIds = groups
+      .slice(groups.indexOf(tiedGroup) + 1)
+      .flatMap((group) => group.ids);
+    startOrder.candidates = tiedGroup.ids;
+    startOrder.queue = [...tiedGroup.ids];
+    startOrder.rolls = {};
+    startOrder.message = `${names} battle for placement.`;
+    pushOverlay(state, "tiebreaker", "Order Tiebreaker", `${names} roll again for placement.`);
+    return;
+  }
+
+  startOrder.order = [
+    ...startOrder.lockedIds,
+    ...groups.flatMap((group) => group.ids),
+    ...startOrder.tailIds,
+  ];
+  startOrder.phase = "complete";
+  startOrder.isComplete = true;
+  startOrder.message = `${seatById(state, startOrder.order[0]).displayName} goes first.`;
+  addLog(state, `Start order: ${startOrder.order.map((seatId) => seatById(state, seatId).displayName).join(", ")}.`);
+}
+
+function updateStartOrderDisplay(state) {
+  const startOrder = state.startOrder;
+  const groups = groupStartOrderCandidates(startOrder.candidates, startOrder.rolls);
+  startOrder.order = [
+    ...startOrder.lockedIds,
+    ...groups.flatMap((group) => group.ids),
+    ...startOrder.candidates.filter((seatId) => startOrder.rolls[seatId] === undefined),
+    ...startOrder.tailIds,
+  ];
+}
+
+function groupStartOrderCandidates(seatIds, rolls) {
+  const rolled = seatIds
+    .filter((seatId) => rolls[seatId] !== undefined)
+    .sort((a, b) => rolls[b] - rolls[a]);
+  const groups = [];
+  rolled.forEach((seatId) => {
+    const die = rolls[seatId];
+    const group = groups.find((item) => item.die === die);
+    if (group) group.ids.push(seatId);
+    else groups.push({ die, ids: [seatId] });
+  });
+  return groups;
+}
+
 function resolveOneDieTie(state, seatIds, highOrLow, reason, title = "Tiebreaker") {
   let tied = [...seatIds];
   while (tied.length > 1) {
@@ -322,6 +426,15 @@ function clockwiseOrder(state, starterId) {
     .filter((seat) => seat.joinedGame && !seat.isOut)
     .sort((a, b) => ((a.seatIndex - starterId + 4) % 4) - ((b.seatIndex - starterId + 4) % 4))
     .map((seat) => seat.seatIndex);
+}
+
+function rotateActiveOrder(state, order, starterId) {
+  const active = order.filter((seatId) => {
+    const seat = seatById(state, seatId);
+    return seat?.joinedGame && !seat.isOut;
+  });
+  const startIndex = Math.max(0, active.indexOf(starterId));
+  return [...active.slice(startIndex), ...active.slice(0, startIndex)];
 }
 
 function activeSeats(state) {

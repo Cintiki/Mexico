@@ -25,6 +25,7 @@ export function createState() {
       joinedGame: true,
     })),
     game: freshGame(),
+    startOrder: freshStartOrder(),
     dice: {
       isAnimating: false,
       animationStage: null,
@@ -55,6 +56,23 @@ export function freshGame() {
     currentBest: null,
     awaitingNextRound: false,
     pendingAutoHoldSeatId: null,
+  };
+}
+
+export function freshStartOrder() {
+  return {
+    phase: "ready",
+    candidates: [],
+    queue: [],
+    lockedIds: [],
+    tailIds: [],
+    rolls: {},
+    order: [],
+    rollingSeatId: null,
+    rollStartedAt: 0,
+    cycleDie: 1,
+    message: "Ready to roll.",
+    isComplete: false,
   };
 }
 
