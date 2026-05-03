@@ -492,7 +492,7 @@ button:not(:disabled):hover {
 .die-shadow {
   position: absolute;
   left: 50%;
-  bottom: -13%;
+  bottom: -2%;
   width: 140%;
   height: 40%;
   transform: translateX(-50%);
