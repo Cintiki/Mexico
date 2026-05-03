@@ -40,9 +40,9 @@ export const ASSETS = {
     diceSparkLines: "assets/props/prop_dice_spark_lines.png",
   },
   diceSprites: {
-    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_02_8f.png", frames: 8, ratio: 0.5, duration: 560 },
-    throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 0.5, reverse: true, duration: 520 },
-    pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 0.5, duration: 520 },
+    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_02_8f.png", frames: 8, ratio: 1, duration: 560 },
+    throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 1, reverse: true, duration: 520 },
+    pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 1, duration: 520 },
     bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 9, ratio: 0.6667 },
   },
 };
