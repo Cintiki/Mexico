@@ -481,11 +481,33 @@ button:not(:disabled):hover {
   z-index: 3;
 }
 
+.settled-die {
+  position: relative;
+  width: clamp(70px, 6vw, 112px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.die-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -5%;
+  width: 112%;
+  height: 32%;
+  transform: translateX(-50%);
+  object-fit: fill;
+  opacity: 0.56;
+  z-index: 0;
+}
+
 .die-face {
+  position: relative;
   width: clamp(70px, 6vw, 112px);
   aspect-ratio: 1;
   object-fit: contain;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.3));
+  z-index: 1;
 }
 
 .controls,

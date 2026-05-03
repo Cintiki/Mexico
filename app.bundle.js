@@ -1008,7 +1008,13 @@ function diceStage(state) {
   }
   if (state.dice.visibleFinalDice && !state.dice.isAnimating) {
     const dice = h("div", "final-dice");
-    state.dice.visibleFinalDice.forEach((die) => dice.append(h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` })));
+    state.dice.visibleFinalDice.forEach((die) => dice.append(
+      h("div", "settled-die",
+        {},
+        h("img", "die-shadow", { src: ASSETS.props.tableShadow, alt: "" }),
+        h("img", "die-face", { src: ASSETS.diceFaces[die], alt: `Die ${die}` }),
+      ),
+    ));
     stage.append(dice);
   }
   return stage;
