@@ -54,6 +54,23 @@ const ASSETS = {
     shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_02_8f.png", frames: 8, ratio: 1, duration: 560 },
     throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 1, reverse: true, duration: 520 },
     pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 1, duration: 520 },
+    byCharacter: {
+      jose: {
+        shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_jose_02_8f.png", frames: 8, ratio: 1, duration: 560 },
+        throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_jose_8f.png", frames: 8, ratio: 1, reverse: true, duration: 520 },
+        pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_jose_8f.png", frames: 8, ratio: 1, duration: 520 },
+      },
+      gomez: {
+        shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_gomez_02_8f.png", frames: 8, ratio: 1, duration: 560 },
+        throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_gomez_8f.png", frames: 8, ratio: 1, reverse: true, duration: 520 },
+        pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_gomez_8f.png", frames: 8, ratio: 1, duration: 520 },
+      },
+      jebuz: {
+        shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_jebuz_02_8f.png", frames: 8, ratio: 1, duration: 560 },
+        throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_jebuz_8f.png", frames: 8, ratio: 1, reverse: true, duration: 520 },
+        pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_jebuz_8f.png", frames: 8, ratio: 1, duration: 520 },
+      },
+    },
     bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 9, ratio: 0.6667 },
   },
 };
@@ -1003,7 +1020,7 @@ function diceStage(state) {
   const current = state.seats.find((seat) => seat.seatIndex === state.game.currentSeatId);
   if (current) stage.append(characterSprite(current));
   if (state.dice.isAnimating) {
-    const sprite = ASSETS.diceSprites[state.dice.animationStage] ?? ASSETS.diceSprites.bounce;
+    const sprite = diceSpriteForStage(state.dice.animationStage, current);
     stage.append(spriteElement(sprite, "dice-sprite", true, "Rolling dice"));
   }
   if (state.dice.visibleFinalDice && !state.dice.isAnimating) {
@@ -1018,6 +1035,11 @@ function diceStage(state) {
     stage.append(dice);
   }
   return stage;
+}
+
+function diceSpriteForStage(stage, seat) {
+  const characterSprites = seat ? ASSETS.diceSprites.byCharacter?.[seat.characterId] : null;
+  return characterSprites?.[stage] ?? ASSETS.diceSprites[stage] ?? ASSETS.diceSprites.bounce;
 }
 
 function characterSprite(seat) {

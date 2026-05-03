@@ -212,7 +212,7 @@ function diceStage(state) {
   const current = state.seats.find((seat) => seat.seatIndex === state.game.currentSeatId);
   if (current) stage.append(characterSprite(current));
   if (state.dice.isAnimating) {
-    const sprite = ASSETS.diceSprites[state.dice.animationStage] ?? ASSETS.diceSprites.bounce;
+    const sprite = diceSpriteForStage(state.dice.animationStage, current);
     stage.append(spriteElement(sprite, "dice-sprite", true, "Rolling dice"));
   }
   if (state.dice.visibleFinalDice && !state.dice.isAnimating) {
@@ -227,6 +227,11 @@ function diceStage(state) {
     stage.append(dice);
   }
   return stage;
+}
+
+function diceSpriteForStage(stage, seat) {
+  const characterSprites = seat ? ASSETS.diceSprites.byCharacter?.[seat.characterId] : null;
+  return characterSprites?.[stage] ?? ASSETS.diceSprites[stage] ?? ASSETS.diceSprites.bounce;
 }
 
 function characterSprite(seat) {
