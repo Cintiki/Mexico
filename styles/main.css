@@ -390,7 +390,8 @@ button:not(:disabled):hover {
 }
 
 .dice-sprite.is-animated .sprite-strip {
-  animation-duration: 0.7s;
+  animation-duration: var(--sprite-duration, 0.7s);
+  animation-direction: var(--sprite-direction, normal);
   animation-iteration-count: 1;
   animation-timing-function: steps(1, end);
 }

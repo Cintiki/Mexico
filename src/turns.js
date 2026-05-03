@@ -170,7 +170,7 @@ export function rollCurrentPlayer(state) {
 
   const dice = rollTwoDice();
   const score = scoreTwoDice(dice);
-  state.dice.animationStage = "bounce";
+  state.dice.animationStage = "shake";
   state.dice.isAnimating = true;
   seat.turnRollsUsed += 1;
   seat.lastRoll = score;

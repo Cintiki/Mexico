@@ -34,11 +34,16 @@ function scheduleNpc() {
 function scheduleDiceSettle() {
   clearTimeout(diceTimer);
   if (state.dice.isAnimating) {
+    const duration = state.dice.animationStage === "shake" ? 560 : 520;
     diceTimer = setTimeout(() => dispatch((draft) => {
+      if (draft.dice.animationStage === "shake") {
+        draft.dice.animationStage = "throw";
+        return;
+      }
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
       showPendingOverlay(draft);
-    }), 700);
+    }), duration);
   }
 }
 

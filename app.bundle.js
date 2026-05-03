@@ -51,8 +51,9 @@ const ASSETS = {
     diceSparkLines: "assets/props/prop_dice_spark_lines.png",
   },
   diceSprites: {
-    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_8f.png", frames: 8, ratio: 0.5 },
-    throw: { src: "assets/sprites/dice/mexico_dice_throw_12f.png", frames: 12, ratio: 0.5 },
+    shake: { src: "assets/sprites/dice/mexico_dice_shake_hand_02_8f.png", frames: 8, ratio: 0.5, duration: 560 },
+    throw: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 0.5, reverse: true, duration: 520 },
+    pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_8f.png", frames: 8, ratio: 0.5, duration: 520 },
     bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 9, ratio: 0.6667 },
   },
 };
@@ -274,6 +275,8 @@ function spriteStyle(sprite) {
   return [
     `--frames: ${sprite.frames}`,
     `--sprite-ratio: ${sprite.ratio ?? 1}`,
+    `--sprite-duration: ${sprite.duration ?? 700}ms`,
+    `--sprite-direction: ${sprite.reverse ? "reverse" : "normal"}`,
   ].join(";");
 }
 
@@ -447,7 +450,7 @@ function rollCurrentPlayer(state) {
 
   const dice = rollTwoDice();
   const score = scoreTwoDice(dice);
-  state.dice.animationStage = "bounce";
+  state.dice.animationStage = "shake";
   state.dice.isAnimating = true;
   seat.turnRollsUsed += 1;
   seat.lastRoll = score;
@@ -1019,7 +1022,7 @@ function characterSprite(seat) {
 function spriteElement(sprite, className, animated, label) {
   return h(
     "div",
-    `${className} sprite-viewport frame-count-${sprite.frames} ${animated ? "is-animated" : "is-static"}`,
+    `${className} sprite-viewport frame-count-${sprite.frames} ${sprite.reverse ? "is-reversed" : ""} ${animated ? "is-animated" : "is-static"}`,
     { style: spriteStyle(sprite), title: label },
     h("img", "sprite-strip", { src: sprite.src, alt: label ?? "" }),
   );
@@ -1240,11 +1243,16 @@ function scheduleNpc() {
 function scheduleDiceSettle() {
   clearTimeout(diceTimer);
   if (state.dice.isAnimating) {
+    const duration = state.dice.animationStage === "shake" ? 560 : 520;
     diceTimer = setTimeout(() => dispatch((draft) => {
+      if (draft.dice.animationStage === "shake") {
+        draft.dice.animationStage = "throw";
+        return;
+      }
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
       showPendingOverlay(draft);
-    }), 700);
+    }), duration);
   }
 }
 

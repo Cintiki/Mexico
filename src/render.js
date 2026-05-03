@@ -231,7 +231,7 @@ function characterSprite(seat) {
 function spriteElement(sprite, className, animated, label) {
   return h(
     "div",
-    `${className} sprite-viewport frame-count-${sprite.frames} ${animated ? "is-animated" : "is-static"}`,
+    `${className} sprite-viewport frame-count-${sprite.frames} ${sprite.reverse ? "is-reversed" : ""} ${animated ? "is-animated" : "is-static"}`,
     { style: spriteStyle(sprite), title: label },
     h("img", "sprite-strip", { src: sprite.src, alt: label ?? "" }),
   );
