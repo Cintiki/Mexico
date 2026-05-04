@@ -194,6 +194,7 @@ function gameBoard(state, dispatch) {
   }
 
   const right = h("aside", "side-panel");
+  if (state.screen === "game") right.append(rulesButton(dispatch));
   right.append(rollToBeat(state));
   right.append(potBox(state));
   right.append(scoreboard(state));
@@ -201,9 +202,67 @@ function gameBoard(state, dispatch) {
 
   shell.append(left, right);
   if (state.overlay) shell.append(overlay(state, dispatch));
+  if (state.rulesOpen) shell.append(rulesPopup(dispatch));
   if (state.screen === "game-winner") shell.append(gameWinnerControls(dispatch));
   if (state.screen === "session-champion") shell.append(sessionControls(dispatch));
   return shell;
+}
+
+function rulesButton(dispatch) {
+  return h("button", "rules-button", { text: "Rules", onClick: () => dispatch((state) => {
+    state.rulesOpen = true;
+  }) });
+}
+
+function rulesPopup(dispatch) {
+  return h("div", "rules-overlay", {},
+    h("div", "rules-card", {},
+      h("div", "rules-card-header", {},
+        h("h2", "", { text: "Mexico Rules" }),
+        h("button", "rules-close", { text: "Close", onClick: () => dispatch((state) => {
+          state.rulesOpen = false;
+        }) }),
+      ),
+      h("div", "rules-grid", {},
+        rulesSection("Turn Order", [
+          "First roller sets the maximum rolls for the round.",
+          "Everyone else may roll up to that same number.",
+          "Roll both dice each time. No keeping one die.",
+        ]),
+        rulesSection("Roll Rank", [
+          "Mexico, 2-1, beats everything.",
+          "Doubles beat normal rolls.",
+          "Normal rolls are read high die first, like 6-5.",
+        ]),
+        rulesSection("Round Result", [
+          "Highest final roll wins the round.",
+          "Lowest final roll takes strikes.",
+          "Ties battle with one die until one winner or loser remains.",
+        ]),
+        rulesSection("Mexico", [
+          "A Mexico roll adds to the round penalty.",
+          "One Mexico means the loser takes 2 strikes.",
+          "More Mexicos stack the penalty higher.",
+        ]),
+        rulesSection("Ride the Bus", [
+          "Only the first player to reach exactly 5 strikes rides the bus.",
+          "Jumping past 5 strikes means the player is out.",
+          "After bus is used, later 5-strike players are out.",
+        ]),
+        rulesSection("Coins", [
+          "Active players pay 1 coin into the pot at game start.",
+          "The last player standing wins the pot.",
+          "Players with 0 coins cannot enter the next game.",
+        ]),
+      ),
+    ),
+  );
+}
+
+function rulesSection(title, lines) {
+  const list = h("ul", "");
+  lines.forEach((line) => list.append(h("li", "", { text: line })));
+  return h("section", "rules-section", {}, h("h3", "", { text: title }), list);
 }
 
 function diceStage(state) {

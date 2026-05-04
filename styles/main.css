@@ -337,6 +337,22 @@ button:not(:disabled):hover {
   gap: 12px;
 }
 
+.rules-button {
+  align-self: flex-end;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  min-height: 42px;
+  padding: 5px 16px 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+
 .dice-stage {
   min-height: 0;
   height: 100%;
@@ -913,6 +929,88 @@ button:not(:disabled):hover {
   font-size: 20px;
 }
 
+.rules-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(247, 243, 232, 0.88);
+  z-index: 12;
+  padding: clamp(14px, 2vw, 28px);
+}
+
+.rules-card {
+  width: min(960px, 96%);
+  max-height: 92%;
+  overflow: auto;
+  border: 5px solid var(--ink);
+  border-radius: 8px;
+  background: #fffdf6;
+  box-shadow: var(--shadow);
+  padding: clamp(16px, 2.2vw, 28px);
+  display: grid;
+  gap: 18px;
+}
+
+.rules-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.rules-card h2,
+.rules-section h3 {
+  margin: 0;
+  line-height: 1;
+}
+
+.rules-card h2 {
+  font-size: clamp(34px, 4vw, 54px);
+}
+
+.rules-close {
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  min-height: 42px;
+  padding: 5px 14px 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.rules-section {
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px 14px;
+}
+
+.rules-section h3 {
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.rules-section ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.rules-section li {
+  margin: 0 0 5px;
+  font-size: clamp(16px, 1.55vw, 20px);
+  line-height: 1.15;
+}
+
 .event-card {
   justify-self: center;
   width: min(300px, 80%);
@@ -1055,6 +1153,12 @@ button:not(:disabled):hover {
     min-width: 0;
   }
 
+  .rules-button {
+    min-height: 34px;
+    padding: 4px 12px 6px;
+    font-size: 15px;
+  }
+
   .info-box {
     min-height: 78px;
     padding: 8px;
@@ -1107,6 +1211,25 @@ button:not(:disabled):hover {
     font-size: 12px;
     overflow: hidden;
   }
+
+  .rules-card {
+    width: min(820px, 96%);
+    max-height: 94%;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .rules-grid {
+    gap: 10px;
+  }
+
+  .rules-section {
+    padding: 10px 12px;
+  }
+
+  .rules-section li {
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 820px) {
@@ -1122,6 +1245,10 @@ button:not(:disabled):hover {
 
   .play-area {
     transform: none;
+  }
+
+  .rules-grid {
+    grid-template-columns: 1fr;
   }
 
   .setup-row {

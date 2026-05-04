@@ -36,6 +36,7 @@ export function createState() {
     overlay: null,
     overlayQueue: [],
     pendingOverlay: null,
+    rulesOpen: false,
   };
 }
 
