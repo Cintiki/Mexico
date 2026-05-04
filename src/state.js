@@ -30,6 +30,7 @@ export function createState() {
       isAnimating: false,
       animationStage: null,
       visibleFinalDice: null,
+      pendingRoll: null,
     },
     message: "Ready to roll.",
     log: [],

@@ -312,7 +312,7 @@ function controls(state, dispatch) {
   const limit = seat ? displayRollLimitFor(state, seat) : 0;
   const rollLimitReached = Boolean(seat) && seat.turnRollsUsed >= limit;
   const mustHoldMexico = Boolean(seat?.lastRoll?.isMexico);
-  const disabled = !seat || seat.isNpc || state.phase !== "round-turn";
+  const disabled = !seat || seat.isNpc || state.phase !== "round-turn" || state.dice.isAnimating;
   const canHold = !disabled && Boolean(seat.lastRoll);
   const wrap = h("div", "controls");
   if (state.phase === "round-result") {

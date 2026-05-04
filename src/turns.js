@@ -173,26 +173,46 @@ export function rollCurrentPlayer(state) {
   state.dice.animationStage = "shake";
   state.dice.isAnimating = true;
   seat.turnRollsUsed += 1;
+  state.dice.pendingRoll = {
+    seatIndex: seat.seatIndex,
+    dice,
+    score,
+    rollsUsed: seat.turnRollsUsed,
+  };
+  state.dice.visibleFinalDice = dice;
+  state.message = `${seat.displayName} rolling...`;
+}
+
+export function settleCurrentRoll(state) {
+  const pending = state.dice.pendingRoll;
+  if (!pending) return;
+  const seat = seatById(state, pending.seatIndex);
+  if (!seat) {
+    state.dice.pendingRoll = null;
+    return;
+  }
+  const { dice, score, rollsUsed } = pending;
   seat.lastRoll = score;
   state.dice.visibleFinalDice = dice;
   state.game.roundRolls[seat.seatIndex] = {
     score,
-    rollsUsed: seat.turnRollsUsed,
+    rollsUsed,
   };
   if (score.isMexico) {
     state.game.mexicoCount += 1;
     state.pendingOverlay = makeOverlay("mexico", "Mexico!", `${seat.displayName} rolled 2-1. The round penalty is now ${describeStrikeGain(state.game.mexicoCount)} strikes.`);
   }
   recomputeCurrentBest(state);
-  state.message = `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`;
-  addLog(state, `${seat.displayName} rolled ${score.label} in ${seat.turnRollsUsed} roll${seat.turnRollsUsed === 1 ? "" : "s"}.`);
+  state.message = `${seat.displayName} rolled ${score.label} in ${rollsUsed} roll${rollsUsed === 1 ? "" : "s"}.`;
+  addLog(state, `${seat.displayName} rolled ${score.label} in ${rollsUsed} roll${rollsUsed === 1 ? "" : "s"}.`);
 
   if (score.isMexico) {
     addLog(state, `${seat.displayName} must hold on Mexico.`);
     state.game.pendingAutoHoldSeatId = seat.seatIndex;
-  } else if (seat.turnRollsUsed >= limit) {
+  } else if (rollsUsed >= rollLimitFor(state, seat)) {
     state.game.pendingAutoHoldSeatId = seat.seatIndex;
   }
+  state.dice.pendingRoll = null;
 }
 
 export function holdCurrentPlayer(state) {

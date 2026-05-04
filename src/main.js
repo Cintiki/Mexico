@@ -1,7 +1,7 @@
 import { preloadAssets } from "./assets.js";
 import { createState } from "./state.js";
 import { render } from "./render.js";
-import { holdCurrentPlayer, runNpcStep, stepStartOrder } from "./turns.js";
+import { holdCurrentPlayer, runNpcStep, settleCurrentRoll, stepStartOrder } from "./turns.js";
 
 const state = createState();
 preloadAssets();
@@ -26,7 +26,7 @@ scheduleNpc();
 function scheduleNpc() {
   clearTimeout(npcTimer);
   const current = state.seats.find((seat) => seat.seatIndex === state.game.currentSeatId);
-  if (state.phase === "round-turn" && current?.isNpc && !state.overlay && !state.game.pendingAutoHoldSeatId) {
+  if (state.phase === "round-turn" && current?.isNpc && !state.dice.isAnimating && !state.overlay && !state.game.pendingAutoHoldSeatId) {
     npcTimer = setTimeout(() => dispatch(runNpcStep), 850);
   }
 }
@@ -42,6 +42,7 @@ function scheduleDiceSettle() {
       }
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
+      settleCurrentRoll(draft);
       showPendingOverlay(draft);
     }), duration);
   }
