@@ -1354,14 +1354,31 @@ button:not(:disabled):hover {
     gap: 2px;
   }
 
+  .phase-round-result .play-area {
+    grid-template-rows: 106px 92px minmax(300px, 1fr) 86px;
+    gap: 0;
+  }
+
   .game-logo {
     width: min(280px, 42%);
     align-self: end;
   }
 
+  .phase-round-result .game-logo {
+    width: min(270px, 40%);
+    align-self: center;
+    transform: translateY(18px);
+  }
+
   .turn-title {
     height: 84px;
     font-size: clamp(42px, 5vh, 64px);
+  }
+
+  .phase-round-result .turn-title {
+    height: 92px;
+    font-size: clamp(42px, 5.6vh, 68px);
+    align-items: end;
   }
 
   .dice-tray {
@@ -1374,6 +1391,18 @@ button:not(:disabled):hover {
 
   .controls {
     height: 64px;
+  }
+
+  .phase-round-result .controls {
+    height: 86px;
+    align-items: start;
+    padding-top: 4px;
+  }
+
+  .phase-round-result .controls .big-button {
+    min-height: 60px;
+    padding: 8px 28px 12px;
+    font-size: clamp(34px, 5.4vh, 50px);
   }
 
   .play-area:has(.winner-logo) {

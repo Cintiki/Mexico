@@ -178,7 +178,7 @@ function orderRowStatusText(state, seat) {
 }
 
 function gameBoard(state, dispatch) {
-  const shell = h("section", "game-board");
+  const shell = h("section", `game-board screen-${state.screen} phase-${state.phase}`);
   const left = h("div", "play-area");
   if (state.screen === "game-winner") {
     left.append(h("img", "event-card winner-logo", { src: ASSETS.events.gameWinner, alt: "Game winner" }));
