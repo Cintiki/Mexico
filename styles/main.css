@@ -1354,6 +1354,11 @@ button:not(:disabled):hover {
     gap: 2px;
   }
 
+  .phase-round-turn .play-area {
+    grid-template-rows: 96px 78px minmax(260px, 1fr) 88px;
+    gap: 0;
+  }
+
   .phase-round-result .play-area {
     grid-template-rows: 106px 92px minmax(300px, 1fr) 86px;
     gap: 0;
@@ -1362,6 +1367,12 @@ button:not(:disabled):hover {
   .game-logo {
     width: min(280px, 42%);
     align-self: end;
+  }
+
+  .phase-round-turn .game-logo {
+    width: min(250px, 38%);
+    align-self: center;
+    transform: translateY(16px);
   }
 
   .phase-round-result .game-logo {
@@ -1375,6 +1386,12 @@ button:not(:disabled):hover {
     font-size: clamp(42px, 5vh, 64px);
   }
 
+  .phase-round-turn .turn-title {
+    height: 78px;
+    font-size: clamp(42px, 5.4vh, 66px);
+    align-items: end;
+  }
+
   .phase-round-result .turn-title {
     height: 92px;
     font-size: clamp(42px, 5.6vh, 68px);
@@ -1385,12 +1402,33 @@ button:not(:disabled):hover {
     width: min(700px, 100%);
   }
 
+  .phase-round-turn .dice-tray {
+    width: min(660px, 100%);
+  }
+
   .character-sprite {
     width: min(260px, 38%);
   }
 
+  .phase-round-turn .character-sprite {
+    width: min(235px, 36%);
+  }
+
   .controls {
     height: 64px;
+  }
+
+  .phase-round-turn .controls {
+    height: 88px;
+    align-items: start;
+    padding-top: 6px;
+  }
+
+  .phase-round-turn .controls .game-button,
+  .phase-round-turn .roll-limit-note {
+    min-height: 52px;
+    padding: 8px 18px 10px;
+    font-size: 22px;
   }
 
   .phase-round-result .controls {
