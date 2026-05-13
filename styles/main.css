@@ -1070,7 +1070,7 @@ button:not(:disabled):hover {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: minmax(280px, 1fr) minmax(78px, auto);
+  grid-template-rows: minmax(300px, 1fr) minmax(84px, auto);
   place-items: center;
   align-content: stretch;
   overflow: visible;
@@ -1092,22 +1092,34 @@ button:not(:disabled):hover {
   font-weight: 900;
 }
 
-.winner-tray {
-  grid-row: 1;
-  width: min(680px, 96%);
-  align-self: end;
-  margin: 0 auto;
-}
-
-.winner-pot-icon {
+.winner-stage {
   grid-row: 1;
   align-self: end;
   justify-self: center;
-  width: min(360px, 42%);
-  max-height: 56%;
+  position: relative;
+  width: min(680px, 96%);
+  aspect-ratio: 1448 / 1086;
+  display: grid;
+  place-items: center;
+}
+
+.winner-tray {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.winner-pot-icon {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 42%;
+  max-width: 300px;
   z-index: 3;
   object-fit: contain;
-  transform: translateY(-18%);
+  transform: translate(-50%, -50%);
 }
 
 .winner-feature .character-sprite {
@@ -1119,9 +1131,9 @@ button:not(:disabled):hover {
 
 .coin-burst {
   position: absolute;
-  width: min(190px, 30%);
-  right: 6%;
-  bottom: 88px;
+  width: 27%;
+  right: 0;
+  bottom: 6%;
   z-index: 2;
 }
 
@@ -1138,7 +1150,8 @@ button:not(:disabled):hover {
   font-weight: 900;
   line-height: 1;
   justify-self: center;
-  transform: translateX(clamp(70px, 10vw, 150px));
+  transform: none;
+  padding-left: clamp(130px, 17vw, 240px);
 }
 
 .winner-pot span {
@@ -1299,11 +1312,11 @@ button:not(:disabled):hover {
   }
 
   .winner-feature {
-    grid-template-rows: minmax(245px, 1fr) minmax(68px, auto);
+    grid-template-rows: minmax(260px, 1fr) minmax(72px, auto);
     align-content: center;
   }
 
-  .winner-tray {
+  .winner-stage {
     width: min(560px, 96%);
   }
 
@@ -1314,15 +1327,16 @@ button:not(:disabled):hover {
   }
 
   .coin-burst {
-    width: min(165px, 28%);
-    right: 3%;
-    bottom: 78px;
+    width: 25%;
+    right: 0;
+    bottom: 6%;
   }
 
   .winner-pot {
     margin-top: 0;
     margin-bottom: 8px;
-    transform: translateX(clamp(54px, 8vw, 105px));
+    transform: none;
+    padding-left: clamp(96px, 14vw, 165px);
   }
 
   .bottom-actions {
@@ -1521,10 +1535,10 @@ button:not(:disabled):hover {
   }
 
   .winner-feature {
-    grid-template-rows: minmax(300px, 1fr) minmax(76px, auto);
+    grid-template-rows: minmax(320px, 1fr) minmax(82px, auto);
   }
 
-  .winner-tray {
+  .winner-stage {
     width: min(720px, 96%);
   }
 
@@ -1537,13 +1551,14 @@ button:not(:disabled):hover {
   .winner-pot {
     margin-top: 0;
     margin-bottom: 10px;
-    transform: translateX(clamp(60px, 9vw, 130px));
+    transform: none;
+    padding-left: clamp(110px, 15vw, 210px);
   }
 
   .coin-burst {
-    width: min(190px, 28%);
-    right: 2%;
-    bottom: 84px;
+    width: 26%;
+    right: 0;
+    bottom: 6%;
   }
 
   .bottom-actions {
@@ -1664,17 +1679,17 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game-winner .winner-feature {
-    grid-template-rows: minmax(230px, 1fr) minmax(64px, auto);
+    grid-template-rows: minmax(250px, 1fr) minmax(68px, auto);
   }
 
-  .game-board.screen-game-winner .winner-tray {
+  .game-board.screen-game-winner .winner-stage {
     width: min(560px, 96%);
   }
 
   .game-board.screen-game-winner .winner-pot-icon {
-    width: min(260px, 38%);
-    max-height: 58%;
-    transform: translateY(-16%);
+    width: 42%;
+    max-width: 240px;
+    transform: translate(-50%, -50%);
   }
 
   .game-board.screen-game-winner .winner-feature .character-sprite {
@@ -1683,13 +1698,15 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game-winner .coin-burst {
-    width: min(150px, 24%);
-    bottom: 68px;
+    width: 24%;
+    right: 0;
+    bottom: 6%;
   }
 
   .game-board.screen-game-winner .winner-pot {
     margin-bottom: 6px;
-    transform: translateX(clamp(48px, 8vw, 96px));
+    transform: none;
+    padding-left: clamp(90px, 14vw, 150px);
   }
 
   .game-board.screen-game-winner .bottom-actions {

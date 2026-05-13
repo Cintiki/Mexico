@@ -404,15 +404,18 @@ function eventFeature(state) {
   if (state.screen === "game-winner") {
     const winner = gameWinnerSeat(state);
     feature.classList.add("winner-feature");
-    feature.append(h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }));
-    feature.append(h("img", "winner-pot-icon", { src: ASSETS.icons.pot, alt: "Pot" }));
+    feature.append(h("div", "winner-stage",
+      {},
+      h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }),
+      h("img", "winner-pot-icon", { src: ASSETS.icons.pot, alt: "Pot" }),
+      h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }),
+    ));
     if (winner) feature.append(characterSprite(winner));
     feature.append(h("div", "winner-pot",
       {},
       h("span", "", { text: "Pot Winner" }),
       h("strong", "", { text: `${state.game.lastPayout} coins` }),
     ));
-    feature.append(h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }));
   } else {
     feature.append(h("img", "event-card large", { src: asset, alt: "" }));
   }
