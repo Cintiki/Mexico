@@ -69,7 +69,7 @@ input {
 }
 
 .board:has(.setup-list) {
-  grid-template-rows: minmax(100px, 18vh) auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(130px, 22vh) auto minmax(0, 1fr) auto;
 }
 
 .board:has(> .scoreboard) {
@@ -112,7 +112,7 @@ input {
 }
 
 .setup-logo {
-  max-width: 310px;
+  max-width: 465px;
 }
 
 .screen-title,
@@ -213,7 +213,7 @@ button:not(:disabled):hover {
 }
 
 .board:has(.setup-list) .setup-list {
-  width: min(860px, 92%);
+  width: min(1120px, 94%);
   height: 100%;
   gap: clamp(8px, 1.3vh, 12px);
   overflow-x: hidden;
@@ -221,7 +221,7 @@ button:not(:disabled):hover {
 }
 
 .board:has(.setup-list) .setup-row {
-  grid-template-columns: minmax(94px, 128px) minmax(180px, 1fr) minmax(260px, 360px);
+  grid-template-columns: minmax(94px, 128px) minmax(180px, 1fr) minmax(360px, 520px);
   gap: clamp(10px, 1.5vw, 16px);
   min-width: 0;
 }
@@ -237,6 +237,7 @@ button:not(:disabled):hover {
 
 .board:has(.setup-list) .portrait-grid {
   gap: clamp(5px, 0.8vw, 8px);
+  min-width: 0;
 }
 
 .board:has(.setup-list) .portrait-choice {
@@ -245,7 +246,7 @@ button:not(:disabled):hover {
 
 .board:has(.setup-list) .setup-logo,
 .board:has(> .scoreboard) .setup-logo {
-  width: min(330px, 36vw);
+  width: min(465px, 42vw);
   max-height: 100%;
   object-fit: contain;
 }
@@ -340,8 +341,8 @@ button:not(:disabled):hover {
 }
 
 .play-area:has(.winner-logo) {
-  grid-template-rows: clamp(170px, 24vh, 260px) minmax(330px, 1fr);
-  gap: 8px;
+  grid-template-rows: clamp(150px, 18vh, 230px) auto minmax(330px, 1fr);
+  gap: clamp(4px, 1vh, 10px);
   overflow: visible;
 }
 
@@ -759,12 +760,12 @@ button:not(:disabled):hover {
   }
 
   .board:has(.setup-list) {
-    grid-template-rows: minmax(88px, 16vh) auto minmax(0, 1fr) auto;
+    grid-template-rows: minmax(122px, 22vh) auto minmax(0, 1fr) auto;
   }
 
   .board:has(.setup-list) .setup-logo,
   .board:has(> .scoreboard) .setup-logo {
-    width: min(250px, 25vw);
+    width: min(380px, 34vw);
   }
 
   .board:has(.setup-list) .screen-title,
@@ -782,7 +783,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(> .scoreboard) > .scoreboard .player-row {
-    grid-template-columns: clamp(36px, 5.6vh, 46px) minmax(132px, 1fr) minmax(50px, 76px) 30px 54px;
+    grid-template-columns: clamp(36px, 5.6vh, 46px) minmax(120px, 1fr) minmax(50px, 76px) minmax(46px, 60px) 52px;
     min-height: clamp(44px, 6.6vh, 52px);
     padding: 4px 7px;
   }
@@ -842,8 +843,8 @@ button:not(:disabled):hover {
 
 .player-row {
   display: grid;
-  grid-template-columns: 60px minmax(82px, 1fr) minmax(86px, 128px) minmax(36px, auto) 62px;
-  gap: 8px;
+  grid-template-columns: 60px minmax(82px, 1fr) minmax(86px, 128px) minmax(68px, 96px) minmax(58px, 70px);
+  gap: 10px;
   min-height: 86px;
   align-items: center;
   padding: 7px;
@@ -865,6 +866,7 @@ button:not(:disabled):hover {
 
 .player-meta {
   min-width: 0;
+  overflow: hidden;
 }
 
 .player-meta strong {
@@ -873,6 +875,9 @@ button:not(:disabled):hover {
   line-height: 1;
   overflow-wrap: normal;
   word-break: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .status-icons {
@@ -904,12 +909,17 @@ button:not(:disabled):hover {
 
 .strike-text {
   text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  letter-spacing: 0.08em;
 }
 
 .coin-text {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 2px;
+  min-width: 0;
 }
 
 .log-panel {
@@ -1059,9 +1069,9 @@ button:not(:disabled):hover {
   min-height: 0;
   height: 100%;
   display: grid;
-  grid-template-rows: minmax(310px, 1fr) auto;
+  grid-template-rows: minmax(280px, 1fr) minmax(58px, auto);
   place-items: center;
-  align-content: end;
+  align-content: stretch;
   overflow: visible;
 }
 
@@ -1073,11 +1083,28 @@ button:not(:disabled):hover {
   margin: 0 auto 0;
 }
 
+.winner-name {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(28px, 4.2vw, 64px);
+  line-height: 1;
+  font-weight: 900;
+}
+
 .winner-tray {
   grid-row: 1;
   width: min(680px, 96%);
   align-self: end;
   margin: 0 auto;
+}
+
+.winner-pot-icon {
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  width: min(190px, 24%);
+  z-index: 2;
+  object-fit: contain;
 }
 
 .winner-feature .character-sprite {
@@ -1101,7 +1128,8 @@ button:not(:disabled):hover {
   z-index: 3;
   display: grid;
   gap: 4px;
-  margin-top: -18px;
+  margin-top: 0;
+  margin-bottom: clamp(10px, 1.6vh, 20px);
   text-align: center;
   text-transform: uppercase;
   font-weight: 900;
@@ -1119,10 +1147,15 @@ button:not(:disabled):hover {
 .bottom-actions {
   grid-column: 1 / -1;
   align-self: end;
+  min-height: 82px;
+  padding-top: 8px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  position: relative;
+  z-index: 10;
 }
 
 .game-board:has(.bottom-actions) {
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) minmax(82px, auto);
 }
 
 @media (min-width: 821px) and (max-width: 1180px) and (max-height: 900px) {
@@ -1220,8 +1253,8 @@ button:not(:disabled):hover {
   }
 
   .player-row {
-    grid-template-columns: 44px minmax(64px, 1fr) minmax(56px, 74px) 24px 46px;
-    gap: 5px;
+    grid-template-columns: 44px minmax(64px, 1fr) minmax(56px, 76px) minmax(50px, 64px) 50px;
+    gap: 6px;
     min-height: 54px;
     padding: 5px;
   }
@@ -1247,17 +1280,21 @@ button:not(:disabled):hover {
   }
 
   .play-area:has(.winner-logo) {
-    grid-template-rows: 150px minmax(345px, 1fr);
+    grid-template-rows: 118px 44px minmax(300px, 1fr);
     gap: 4px;
   }
 
   .winner-logo {
-    width: min(360px, 72%);
+    width: min(340px, 68%);
     align-self: end;
   }
 
+  .winner-name {
+    font-size: clamp(28px, 4.6vh, 42px);
+  }
+
   .winner-feature {
-    grid-template-rows: minmax(285px, 1fr) auto;
+    grid-template-rows: minmax(245px, 1fr) minmax(54px, auto);
     align-content: center;
   }
 
@@ -1278,7 +1315,8 @@ button:not(:disabled):hover {
   }
 
   .winner-pot {
-    margin-top: -12px;
+    margin-top: 0;
+    margin-bottom: 8px;
   }
 
   .bottom-actions {
@@ -1326,22 +1364,22 @@ button:not(:disabled):hover {
   }
 
   .board:has(.setup-list) {
-    grid-template-rows: minmax(130px, 20vh) auto minmax(0, 1fr) auto;
+    grid-template-rows: minmax(150px, 24vh) auto minmax(0, 1fr) auto;
     gap: 8px;
   }
 
   .board:has(.setup-list) .setup-logo {
-    width: min(360px, 30vw);
+    width: min(465px, 38vw);
   }
 
   .board:has(.setup-list) .setup-list {
-    width: min(1040px, 88%);
+    width: min(1220px, 94%);
   }
 
   .board:has(.setup-list) .setup-row {
-    grid-template-columns: minmax(120px, 150px) minmax(260px, 1fr) minmax(410px, 520px);
-    gap: 18px;
-    min-height: 160px;
+    grid-template-columns: minmax(112px, 150px) minmax(230px, 1fr) minmax(360px, 560px);
+    gap: clamp(12px, 1.6vw, 18px);
+    min-height: 150px;
   }
 
   .board:has(.order-layout) {
@@ -1463,17 +1501,21 @@ button:not(:disabled):hover {
   }
 
   .play-area:has(.winner-logo) {
-    grid-template-rows: 180px minmax(410px, 1fr);
+    grid-template-rows: 150px 56px minmax(360px, 1fr);
     gap: 4px;
   }
 
   .winner-logo {
-    width: min(540px, 72%);
+    width: min(500px, 68%);
     align-self: end;
   }
 
+  .winner-name {
+    font-size: clamp(34px, 5.2vh, 52px);
+  }
+
   .winner-feature {
-    grid-template-rows: minmax(330px, 1fr) auto;
+    grid-template-rows: minmax(300px, 1fr) minmax(58px, auto);
   }
 
   .winner-tray {
@@ -1487,7 +1529,8 @@ button:not(:disabled):hover {
   }
 
   .winner-pot {
-    margin-top: -20px;
+    margin-top: 0;
+    margin-bottom: 10px;
   }
 
   .coin-burst {
@@ -1590,6 +1633,59 @@ button:not(:disabled):hover {
     min-height: 66px;
     padding: 8px 32px 12px;
     font-size: clamp(34px, 5.5vh, 52px);
+  }
+
+  .game-board.screen-game-winner {
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 34%);
+    grid-template-rows: minmax(0, 1fr) minmax(78px, auto);
+    gap: 16px 18px;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
+  }
+
+  .game-board.screen-game-winner .play-area {
+    grid-template-rows: 128px 44px minmax(285px, 1fr);
+    gap: 2px;
+    overflow: visible;
+  }
+
+  .game-board.screen-game-winner .winner-logo {
+    width: min(390px, 64%);
+  }
+
+  .game-board.screen-game-winner .winner-name {
+    font-size: clamp(30px, 5.2vh, 44px);
+  }
+
+  .game-board.screen-game-winner .winner-feature {
+    grid-template-rows: minmax(230px, 1fr) minmax(50px, auto);
+  }
+
+  .game-board.screen-game-winner .winner-tray {
+    width: min(560px, 96%);
+  }
+
+  .game-board.screen-game-winner .winner-pot-icon {
+    width: min(145px, 22%);
+  }
+
+  .game-board.screen-game-winner .winner-feature .character-sprite {
+    width: min(205px, 35%);
+    bottom: 42px;
+  }
+
+  .game-board.screen-game-winner .coin-burst {
+    width: min(150px, 24%);
+    bottom: 68px;
+  }
+
+  .game-board.screen-game-winner .winner-pot {
+    margin-bottom: 6px;
+  }
+
+  .game-board.screen-game-winner .bottom-actions {
+    min-height: 72px;
+    padding-top: 4px;
+    align-self: center;
   }
 }
 

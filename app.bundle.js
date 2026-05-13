@@ -1012,6 +1012,8 @@ function gameBoard(state, dispatch) {
   const left = h("div", "play-area");
   if (state.screen === "game-winner") {
     left.append(h("img", "event-card winner-logo", { src: ASSETS.events.gameWinner, alt: "Game winner" }));
+    const winner = gameWinnerSeat(state);
+    left.append(h("h1", "winner-name", { text: winner ? winner.displayName : "Winner" }));
   } else {
     left.append(h("img", "logo-small game-logo", { src: ASSETS.branding.small, alt: "Mexico" }));
     left.append(h("h1", "turn-title", { text: titleFor(state) }));
@@ -1233,6 +1235,7 @@ function eventFeature(state) {
     const winner = gameWinnerSeat(state);
     feature.classList.add("winner-feature");
     feature.append(h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }));
+    feature.append(h("img", "winner-pot-icon", { src: ASSETS.icons.pot, alt: "Pot" }));
     if (winner) feature.append(characterSprite(winner));
     feature.append(h("div", "winner-pot",
       {},
