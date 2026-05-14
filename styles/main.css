@@ -1984,15 +1984,15 @@ button:not(:disabled):hover {
     width: 100%;
     height: auto;
     display: grid;
-    grid-template-rows: 54px 34px 198px 54px;
+    grid-template-rows: 72px 58px 156px 48px;
     gap: 4px;
     margin: 0;
     overflow: hidden;
   }
 
   .game-board.screen-game .game-logo {
-    width: min(150px, 40vw);
-    max-height: 54px;
+    width: min(190px, 52vw);
+    max-height: 72px;
     object-fit: contain;
     align-self: center;
   }
@@ -2002,8 +2002,10 @@ button:not(:disabled):hover {
     min-height: 0;
     align-items: center;
     font-size: clamp(24px, 6.7vw, 32px);
-    line-height: 0.95;
+    line-height: 1;
     margin: 0;
+    padding: 0 4px;
+    overflow-wrap: anywhere;
   }
 
   .game-board.screen-game .dice-stage {
@@ -2026,13 +2028,13 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .dice-sprite {
     left: 43%;
-    bottom: 31%;
+    bottom: 18%;
     height: min(150px, 54%);
   }
 
   .game-board.screen-game .final-dice {
     left: 47%;
-    bottom: 31%;
+    bottom: 20%;
     gap: 9px;
   }
 
@@ -2045,11 +2047,11 @@ button:not(:disabled):hover {
     position: static;
     z-index: auto;
     display: grid;
-    grid-template-columns: minmax(96px, auto) minmax(82px, auto) minmax(82px, auto);
+    grid-template-columns: 88px 72px 72px;
     justify-content: center;
-    height: 54px;
+    height: 48px;
     min-height: 0;
-    gap: 7px;
+    gap: 6px;
     align-content: center;
     align-items: center;
     padding: 0;
@@ -2057,7 +2059,7 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game.phase-round-result .controls {
-    height: 54px;
+    height: 48px;
     min-height: 0;
     margin: 0;
   }
@@ -2068,16 +2070,16 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .controls .game-button,
   .game-board.screen-game .roll-limit-note {
-    min-height: 44px;
+    min-height: 38px;
     min-width: 0;
-    padding: 6px 12px 8px;
-    font-size: 18px;
+    padding: 5px 8px 7px;
+    font-size: 16px;
   }
 
   .game-board.screen-game.phase-round-result .controls .big-button {
-    min-height: 48px;
-    padding: 7px 24px 10px;
-    font-size: clamp(28px, 8vw, 36px);
+    min-height: 40px;
+    padding: 5px 18px 8px;
+    font-size: clamp(22px, 6.5vw, 30px);
   }
 
   .game-board.screen-game .side-panel {
