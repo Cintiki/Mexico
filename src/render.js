@@ -352,10 +352,14 @@ function controls(state, dispatch) {
     wrap.append(h("button", "big-button", { text: "Next Round", onClick: () => dispatch(continueAfterRound) }));
     return wrap;
   }
+  if (seat?.isNpc) {
+    wrap.classList.add("is-npc-turn");
+    wrap.append(h("span", "roll-limit-note", { text: "NPC rolling" }));
+    return wrap;
+  }
   if (seat) wrap.append(h("span", "roll-limit-note", { text: `Rolls: ${seat.turnRollsUsed}/${limit}` }));
   wrap.append(h("button", "game-button", { text: "Roll", disabled: disabled || rollLimitReached || mustHoldMexico, onClick: () => dispatch(rollCurrentPlayer) }));
   wrap.append(h("button", "game-button", { text: "Hold", disabled: !canHold, onClick: () => dispatch(holdCurrentPlayer) }));
-  if (seat?.isNpc) wrap.append(h("button", "game-button", { text: "NPC Step", onClick: () => dispatch(runNpcStep) }));
   return wrap;
 }
 
