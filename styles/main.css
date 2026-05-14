@@ -1968,20 +1968,22 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 7px;
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: start;
+    align-items: start;
+    gap: 8px;
     padding: 50px 10px 12px;
   }
 
   .game-board.screen-game .play-area {
-    flex: 0 0 auto;
+    width: 100%;
     height: auto;
-    grid-template-rows: 34px minmax(32px, auto) clamp(172px, 25vh, 226px) minmax(56px, auto);
-    gap: 0;
-    margin-bottom: 36px;
-    overflow: visible;
+    display: grid;
+    grid-template-rows: 34px 34px 218px 54px;
+    gap: 4px;
+    margin: 0;
+    overflow: hidden;
   }
 
   .game-board.screen-game .game-logo {
@@ -1991,22 +1993,23 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .turn-title {
     height: auto;
-    min-height: 32px;
+    min-height: 0;
     align-items: center;
     font-size: clamp(24px, 6.7vw, 32px);
     line-height: 0.95;
-    margin-bottom: -8px;
+    margin: 0;
   }
 
   .game-board.screen-game .dice-stage {
     min-height: 0;
     height: 100%;
-    overflow: visible;
-    transform: translateY(-18px);
+    overflow: hidden;
+    transform: none;
   }
 
   .game-board.screen-game .dice-tray {
-    width: min(100%, 354px);
+    width: min(100%, 356px);
+    max-height: 100%;
   }
 
   .game-board.screen-game .character-sprite {
@@ -2038,17 +2041,19 @@ button:not(:disabled):hover {
     display: grid;
     grid-template-columns: minmax(96px, auto) minmax(82px, auto) minmax(82px, auto);
     justify-content: center;
-    height: auto;
-    min-height: 56px;
+    height: 54px;
+    min-height: 0;
     gap: 7px;
     align-content: center;
+    align-items: center;
     padding: 0;
-    margin-bottom: 28px;
+    margin: 0;
   }
 
   .game-board.screen-game.phase-round-result .controls {
-    min-height: 58px;
-    margin-bottom: 42px;
+    height: 54px;
+    min-height: 0;
+    margin: 0;
   }
 
   .game-board.screen-game .controls .game-button,
@@ -2060,21 +2065,21 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game.phase-round-result .controls .big-button {
-    min-height: 54px;
+    min-height: 48px;
     padding: 7px 24px 10px;
     font-size: clamp(28px, 8vw, 36px);
   }
 
   .game-board.screen-game .side-panel {
-    flex: 0 0 auto;
     width: 100%;
     min-width: 0;
     position: static;
     z-index: 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 42px auto;
     gap: 6px;
-    margin-top: 20px;
+    margin: 0;
     order: 2;
   }
 
@@ -2089,22 +2094,24 @@ button:not(:disabled):hover {
   .game-board.screen-game .info-box,
   .game-board.screen-game .pot-box {
     min-width: 0;
+    height: 42px;
     min-height: 0;
-    padding: 4px 6px 5px;
+    padding: 3px 6px 4px;
     overflow: hidden;
   }
 
   .game-board.screen-game .info-box h2 {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1;
   }
 
   .game-board.screen-game .info-box p {
-    font-size: 19px;
+    font-size: 17px;
     line-height: 1;
   }
 
   .game-board.screen-game .info-box small {
+    display: none;
     margin-top: 0;
     font-size: 10px;
     line-height: 1;
@@ -2112,7 +2119,7 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .pot-box {
     gap: 5px;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1;
   }
 
