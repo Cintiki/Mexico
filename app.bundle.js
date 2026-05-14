@@ -135,52 +135,71 @@ const SOUND_PATHS = {
   winnerLoop: "assets/sounds/14_winner_screen_loop_soft_mariachi_16bit.wav",
 };
 
-const VOLUMES = {
-  setupLoop: 0.24,
-  rollWaitLoop: 0.18,
-  winnerLoop: 0.18,
-  uiClick: 0.34,
-  characterSelect: 0.34,
-  diceShake: 0.46,
-  diceLand: 0.52,
-  mexicoRoll: 0.56,
-  strike: 0.46,
-  playerOut: 0.56,
-  potAdd: 0.42,
-  potWinner: 0.56,
-  gameWinner: 0.62,
-  startGame: 0.56,
+const MUSIC_PATHS = {
+  background: "assets/sounds/15_mexico_song_Loop.mp3",
 };
 
+const VOLUMES = {
+  background: 0.24,
+  setupLoop: 0.05,
+  rollWaitLoop: 0.04,
+  winnerLoop: 0.05,
+  uiClick: 0.58,
+  characterSelect: 0.58,
+  diceShake: 0.72,
+  diceLand: 0.78,
+  mexicoRoll: 0.82,
+  strike: 0.72,
+  playerOut: 0.82,
+  potAdd: 0.68,
+  potWinner: 0.82,
+  gameWinner: 0.86,
+  startGame: 0.82,
+};
+
+const STORAGE_KEY = "mexicoAudioEnabled";
 const cache = new Map();
+const musicCache = new Map();
+const activeEffects = new Set();
 let activeLoop = null;
 let activeLoopName = null;
 let isUnlocked = false;
+let audioEnabled = loadAudioPreference();
+let backgroundMusic = null;
 
 function preloadAudio() {
   Object.keys(SOUND_PATHS).forEach((name) => getAudio(name));
+  Object.keys(MUSIC_PATHS).forEach((name) => getMusic(name));
 }
 
 function unlockAudio() {
-  if (isUnlocked) return;
+  if (isUnlocked) {
+    startBackgroundMusic();
+    return;
+  }
   isUnlocked = true;
   const audio = getAudio("uiClick");
   audio?.play().then(() => {
     audio.pause();
     audio.currentTime = 0;
   }).catch(() => {});
+  startBackgroundMusic();
 }
 
 function playSound(name) {
+  if (!audioEnabled) return;
   const base = getAudio(name);
   if (!base) return;
   const audio = base.cloneNode();
   audio.volume = volumeFor(name);
   audio.loop = false;
+  activeEffects.add(audio);
+  audio.addEventListener("ended", () => activeEffects.delete(audio), { once: true });
   audio.play().catch(() => {});
 }
 
 function startLoop(name) {
+  if (!audioEnabled) return;
   if (activeLoopName === name && activeLoop) return;
   stopLoop();
   const audio = getAudio(name);
@@ -203,10 +222,40 @@ function stopLoop() {
 
 function stopAllAudio() {
   stopLoop();
+  stopBackgroundMusic();
+  activeEffects.forEach((audio) => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+  activeEffects.clear();
   cache.forEach((audio) => {
     audio.pause();
     audio.currentTime = 0;
   });
+}
+
+function startBackgroundMusic() {
+  if (!audioEnabled || !isUnlocked) return;
+  const audio = getMusic("background");
+  if (!audio) return;
+  if (!backgroundMusic) backgroundMusic = audio;
+  audio.loop = true;
+  audio.volume = volumeFor("background");
+  audio.play().catch(() => {});
+}
+
+function setAudioEnabled(enabled) {
+  audioEnabled = Boolean(enabled);
+  saveAudioPreference(audioEnabled);
+  if (audioEnabled) {
+    startBackgroundMusic();
+  } else {
+    stopAllAudio();
+  }
+}
+
+function isAudioEnabled() {
+  return audioEnabled;
 }
 
 function getAudio(name) {
@@ -220,8 +269,39 @@ function getAudio(name) {
   return cache.get(name);
 }
 
+function getMusic(name) {
+  if (!MUSIC_PATHS[name] || typeof Audio === "undefined") return null;
+  if (!musicCache.has(name)) {
+    const audio = new Audio(MUSIC_PATHS[name]);
+    audio.preload = "auto";
+    audio.loop = true;
+    audio.volume = volumeFor(name);
+    musicCache.set(name, audio);
+  }
+  return musicCache.get(name);
+}
+
+function stopBackgroundMusic() {
+  if (!backgroundMusic) return;
+  backgroundMusic.pause();
+}
+
 function volumeFor(name) {
   return VOLUMES[name] ?? 0.4;
+}
+
+function loadAudioPreference() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== "off";
+  } catch {
+    return true;
+  }
+}
+
+function saveAudioPreference(enabled) {
+  try {
+    localStorage.setItem(STORAGE_KEY, enabled ? "on" : "off");
+  } catch {}
 }
 
 
@@ -957,8 +1037,8 @@ function render(state, dispatch) {
 }
 
 function viewForState(state, dispatch) {
-  if (state.screen === "landing") return landing(dispatch);
-  if (state.screen === "player-count") return playerCount(dispatch);
+  if (state.screen === "landing") return landing(state, dispatch);
+  if (state.screen === "player-count") return playerCount(state, dispatch);
   if (state.screen === "setup") return setup(state, dispatch);
   if (state.screen === "buy-in" || state.screen === "start-order") return preGame(state, dispatch);
   if (state.screen === "game" || state.screen === "game-winner" || state.screen === "session-champion") return gameBoard(state, dispatch);
@@ -971,26 +1051,40 @@ function board(...children) {
   return el;
 }
 
-function landing(dispatch) {
-  return board(
+function soundToggle(state, dispatch) {
+  return h("button", "sound-toggle", {
+    text: state.audioEnabled ? "Sound On" : "Sound Off",
+    title: state.audioEnabled ? "Turn sound off" : "Turn sound on",
+    onClick: () => dispatch((draft) => {
+      draft.audioEnabled = !draft.audioEnabled;
+    }),
+  });
+}
+
+function landing(state, dispatch) {
+  const screen = board(
     h("img", "logo-main", { src: ASSETS.branding.main, alt: "Mexico" }),
     h("button", "big-button", { text: "Play Now", onClick: () => dispatch((state) => {
       state.screen = "player-count";
       state.phase = "player-count";
     }) }),
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
-function playerCount(dispatch) {
+function playerCount(state, dispatch) {
   const choices = h("div", "count-grid");
   [1, 2, 3, 4].forEach((count) => {
     choices.append(h("button", "count-button", { text: String(count), onClick: () => dispatch((state) => setRealPlayerCount(state, count)) }));
   });
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: "How many players?" }),
     choices,
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function setup(state, dispatch) {
@@ -1022,12 +1116,14 @@ function setup(state, dispatch) {
     if (state.setup.errors[index]) row.append(h("p", "validation", { text: state.setup.errors[index] }));
     form.append(row);
   }
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: "Set up players" }),
     form,
     h("button", "big-button", { text: "Start Game", onClick: () => dispatch(validateAndCreateSeats) }),
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function preGame(state, dispatch) {
@@ -1038,13 +1134,15 @@ function preGame(state, dispatch) {
       draft.phase = "start-order";
     }) })
     : h("button", "big-button", { text: "Start Rolling", onClick: () => dispatch(resolveStartOrder) });
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: state.screen === "buy-in" ? "Buy-In" : "Start Order Roll" }),
     h("p", "screen-copy", { text: state.screen === "buy-in" ? `Active players paid in. The pot is ${state.game.pot} coins.` : "Each active player rolls one die. Highest starts." }),
     scoreboard(state),
     action,
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function startOrderScreen(state, dispatch) {
@@ -1052,13 +1150,15 @@ function startOrderScreen(state, dispatch) {
   const action = startOrder.isComplete
     ? h("button", "big-button", { text: "Continue", onClick: () => dispatch(resolveStartOrder) })
     : h("button", "big-button", { text: "Start Rolling", disabled: startOrder.phase === "rolling", onClick: () => dispatch(beginStartOrder) });
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: startOrder.isComplete ? "Roll Order" : "Start Order Roll" }),
     h("p", "screen-copy", { text: startOrder.message || "Each active player rolls one die. Highest starts." }),
     startOrderBoard(state),
     action,
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function startOrderBoard(state) {
@@ -1141,6 +1241,7 @@ function gameBoard(state, dispatch) {
   right.append(logPanel(state));
 
   shell.append(left, right);
+  shell.append(soundToggle(state, dispatch));
   if (state.overlay) shell.append(overlay(state, dispatch));
   if (state.rulesOpen) shell.append(rulesPopup(dispatch));
   if (state.screen === "game-winner") shell.append(gameWinnerControls(dispatch));
@@ -1437,6 +1538,7 @@ function h(tag, className = "", props = {}, ...children) {
 // src/main.js
 
 const state = createState();
+state.audioEnabled = isAudioEnabled();
 preloadAssets();
 preloadAudio();
 let npcTimer = null;
@@ -1521,9 +1623,12 @@ function scheduleStartOrder() {
 
 function syncAudio(previous, current) {
   if (previous) {
+    if (previous.audioEnabled !== current.audioEnabled) {
+      setAudioEnabled(current.audioEnabled);
+    }
     playTransitionSounds(previous, current);
   }
-  syncLoop(current);
+  startBackgroundMusic();
 }
 
 function playTransitionSounds(previous, current) {
@@ -1553,26 +1658,6 @@ function playTransitionSounds(previous, current) {
   }
 }
 
-function syncLoop(current) {
-  const loop = loopForState(current);
-  if (loop) startLoop(loop);
-  else stopLoop();
-}
-
-function loopForState(current) {
-  if (current.screen === "setup") return "setupLoop";
-  if (current.screen === "game-winner" && !current.overlay) return "winnerLoop";
-  if (current.screen === "game" && current.phase === "round-turn" && isWaitingForHumanRoll(current)) return "rollWaitLoop";
-  return null;
-}
-
-function isWaitingForHumanRoll(current) {
-  if (current.dice.isAnimating || current.overlay || current.game.pendingAutoHoldSeatId !== null) return false;
-  const seat = current.seats.find((item) => item.seatIndex === current.game.currentSeatId);
-  if (!seat || seat.isNpc || seat.lastRoll?.isMexico) return false;
-  return seat.turnRollsUsed < rollLimitForAudio(current, seat);
-}
-
 function totalStrikes(current) {
   return current.seats.reduce((total, seat) => total + seat.strikes, 0);
 }
@@ -1581,13 +1666,9 @@ function outCount(current) {
   return current.seats.filter((seat) => seat.isOut).length;
 }
 
-function rollLimitForAudio(current, seat) {
-  if (seat.seatIndex === current.game.startingSeatId) return 3;
-  return current.game.maxRollsThisRound ?? 1;
-}
-
 function snapshotState(current) {
   return {
+    audioEnabled: current.audioEnabled,
     screen: current.screen,
     phase: current.phase,
     overlay: current.overlay ? { ...current.overlay } : null,

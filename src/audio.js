@@ -15,52 +15,71 @@ const SOUND_PATHS = {
   winnerLoop: "assets/sounds/14_winner_screen_loop_soft_mariachi_16bit.wav",
 };
 
-const VOLUMES = {
-  setupLoop: 0.24,
-  rollWaitLoop: 0.18,
-  winnerLoop: 0.18,
-  uiClick: 0.34,
-  characterSelect: 0.34,
-  diceShake: 0.46,
-  diceLand: 0.52,
-  mexicoRoll: 0.56,
-  strike: 0.46,
-  playerOut: 0.56,
-  potAdd: 0.42,
-  potWinner: 0.56,
-  gameWinner: 0.62,
-  startGame: 0.56,
+const MUSIC_PATHS = {
+  background: "assets/sounds/15_mexico_song_Loop.mp3",
 };
 
+const VOLUMES = {
+  background: 0.24,
+  setupLoop: 0.05,
+  rollWaitLoop: 0.04,
+  winnerLoop: 0.05,
+  uiClick: 0.58,
+  characterSelect: 0.58,
+  diceShake: 0.72,
+  diceLand: 0.78,
+  mexicoRoll: 0.82,
+  strike: 0.72,
+  playerOut: 0.82,
+  potAdd: 0.68,
+  potWinner: 0.82,
+  gameWinner: 0.86,
+  startGame: 0.82,
+};
+
+const STORAGE_KEY = "mexicoAudioEnabled";
 const cache = new Map();
+const musicCache = new Map();
+const activeEffects = new Set();
 let activeLoop = null;
 let activeLoopName = null;
 let isUnlocked = false;
+let audioEnabled = loadAudioPreference();
+let backgroundMusic = null;
 
 export function preloadAudio() {
   Object.keys(SOUND_PATHS).forEach((name) => getAudio(name));
+  Object.keys(MUSIC_PATHS).forEach((name) => getMusic(name));
 }
 
 export function unlockAudio() {
-  if (isUnlocked) return;
+  if (isUnlocked) {
+    startBackgroundMusic();
+    return;
+  }
   isUnlocked = true;
   const audio = getAudio("uiClick");
   audio?.play().then(() => {
     audio.pause();
     audio.currentTime = 0;
   }).catch(() => {});
+  startBackgroundMusic();
 }
 
 export function playSound(name) {
+  if (!audioEnabled) return;
   const base = getAudio(name);
   if (!base) return;
   const audio = base.cloneNode();
   audio.volume = volumeFor(name);
   audio.loop = false;
+  activeEffects.add(audio);
+  audio.addEventListener("ended", () => activeEffects.delete(audio), { once: true });
   audio.play().catch(() => {});
 }
 
 export function startLoop(name) {
+  if (!audioEnabled) return;
   if (activeLoopName === name && activeLoop) return;
   stopLoop();
   const audio = getAudio(name);
@@ -83,10 +102,40 @@ export function stopLoop() {
 
 export function stopAllAudio() {
   stopLoop();
+  stopBackgroundMusic();
+  activeEffects.forEach((audio) => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+  activeEffects.clear();
   cache.forEach((audio) => {
     audio.pause();
     audio.currentTime = 0;
   });
+}
+
+export function startBackgroundMusic() {
+  if (!audioEnabled || !isUnlocked) return;
+  const audio = getMusic("background");
+  if (!audio) return;
+  if (!backgroundMusic) backgroundMusic = audio;
+  audio.loop = true;
+  audio.volume = volumeFor("background");
+  audio.play().catch(() => {});
+}
+
+export function setAudioEnabled(enabled) {
+  audioEnabled = Boolean(enabled);
+  saveAudioPreference(audioEnabled);
+  if (audioEnabled) {
+    startBackgroundMusic();
+  } else {
+    stopAllAudio();
+  }
+}
+
+export function isAudioEnabled() {
+  return audioEnabled;
 }
 
 function getAudio(name) {
@@ -100,6 +149,37 @@ function getAudio(name) {
   return cache.get(name);
 }
 
+function getMusic(name) {
+  if (!MUSIC_PATHS[name] || typeof Audio === "undefined") return null;
+  if (!musicCache.has(name)) {
+    const audio = new Audio(MUSIC_PATHS[name]);
+    audio.preload = "auto";
+    audio.loop = true;
+    audio.volume = volumeFor(name);
+    musicCache.set(name, audio);
+  }
+  return musicCache.get(name);
+}
+
+function stopBackgroundMusic() {
+  if (!backgroundMusic) return;
+  backgroundMusic.pause();
+}
+
 function volumeFor(name) {
   return VOLUMES[name] ?? 0.4;
+}
+
+function loadAudioPreference() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== "off";
+  } catch {
+    return true;
+  }
+}
+
+function saveAudioPreference(enabled) {
+  try {
+    localStorage.setItem(STORAGE_KEY, enabled ? "on" : "off");
+  } catch {}
 }

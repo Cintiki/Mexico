@@ -19,8 +19,8 @@ export function render(state, dispatch) {
 }
 
 function viewForState(state, dispatch) {
-  if (state.screen === "landing") return landing(dispatch);
-  if (state.screen === "player-count") return playerCount(dispatch);
+  if (state.screen === "landing") return landing(state, dispatch);
+  if (state.screen === "player-count") return playerCount(state, dispatch);
   if (state.screen === "setup") return setup(state, dispatch);
   if (state.screen === "buy-in" || state.screen === "start-order") return preGame(state, dispatch);
   if (state.screen === "game" || state.screen === "game-winner" || state.screen === "session-champion") return gameBoard(state, dispatch);
@@ -33,26 +33,40 @@ function board(...children) {
   return el;
 }
 
-function landing(dispatch) {
-  return board(
+function soundToggle(state, dispatch) {
+  return h("button", "sound-toggle", {
+    text: state.audioEnabled ? "Sound On" : "Sound Off",
+    title: state.audioEnabled ? "Turn sound off" : "Turn sound on",
+    onClick: () => dispatch((draft) => {
+      draft.audioEnabled = !draft.audioEnabled;
+    }),
+  });
+}
+
+function landing(state, dispatch) {
+  const screen = board(
     h("img", "logo-main", { src: ASSETS.branding.main, alt: "Mexico" }),
     h("button", "big-button", { text: "Play Now", onClick: () => dispatch((state) => {
       state.screen = "player-count";
       state.phase = "player-count";
     }) }),
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
-function playerCount(dispatch) {
+function playerCount(state, dispatch) {
   const choices = h("div", "count-grid");
   [1, 2, 3, 4].forEach((count) => {
     choices.append(h("button", "count-button", { text: String(count), onClick: () => dispatch((state) => setRealPlayerCount(state, count)) }));
   });
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: "How many players?" }),
     choices,
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function setup(state, dispatch) {
@@ -84,12 +98,14 @@ function setup(state, dispatch) {
     if (state.setup.errors[index]) row.append(h("p", "validation", { text: state.setup.errors[index] }));
     form.append(row);
   }
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: "Set up players" }),
     form,
     h("button", "big-button", { text: "Start Game", onClick: () => dispatch(validateAndCreateSeats) }),
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function preGame(state, dispatch) {
@@ -100,13 +116,15 @@ function preGame(state, dispatch) {
       draft.phase = "start-order";
     }) })
     : h("button", "big-button", { text: "Start Rolling", onClick: () => dispatch(resolveStartOrder) });
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: state.screen === "buy-in" ? "Buy-In" : "Start Order Roll" }),
     h("p", "screen-copy", { text: state.screen === "buy-in" ? `Active players paid in. The pot is ${state.game.pot} coins.` : "Each active player rolls one die. Highest starts." }),
     scoreboard(state),
     action,
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function startOrderScreen(state, dispatch) {
@@ -114,13 +132,15 @@ function startOrderScreen(state, dispatch) {
   const action = startOrder.isComplete
     ? h("button", "big-button", { text: "Continue", onClick: () => dispatch(resolveStartOrder) })
     : h("button", "big-button", { text: "Start Rolling", disabled: startOrder.phase === "rolling", onClick: () => dispatch(beginStartOrder) });
-  return board(
+  const screen = board(
     h("img", "logo-small setup-logo", { src: ASSETS.branding.small, alt: "Mexico" }),
     h("h1", "screen-title", { text: startOrder.isComplete ? "Roll Order" : "Start Order Roll" }),
     h("p", "screen-copy", { text: startOrder.message || "Each active player rolls one die. Highest starts." }),
     startOrderBoard(state),
     action,
   );
+  screen.append(soundToggle(state, dispatch));
+  return screen;
 }
 
 function startOrderBoard(state) {
@@ -203,6 +223,7 @@ function gameBoard(state, dispatch) {
   right.append(logPanel(state));
 
   shell.append(left, right);
+  shell.append(soundToggle(state, dispatch));
   if (state.overlay) shell.append(overlay(state, dispatch));
   if (state.rulesOpen) shell.append(rulesPopup(dispatch));
   if (state.screen === "game-winner") shell.append(gameWinnerControls(dispatch));

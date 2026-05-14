@@ -9,6 +9,8 @@ const types = {
   ".js": "text/javascript",
   ".css": "text/css",
   ".png": "image/png",
+  ".mp3": "audio/mpeg",
+  ".wav": "audio/wav",
 };
 
 http.createServer((request, response) => {

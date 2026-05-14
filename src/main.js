@@ -1,10 +1,11 @@
 import { preloadAssets } from "./assets.js";
-import { preloadAudio, playSound, startLoop, stopLoop, unlockAudio } from "./audio.js";
+import { isAudioEnabled, preloadAudio, playSound, setAudioEnabled, startBackgroundMusic, stopLoop, unlockAudio } from "./audio.js";
 import { createState } from "./state.js";
 import { render } from "./render.js";
 import { holdCurrentPlayer, runNpcStep, settleCurrentRoll, stepStartOrder } from "./turns.js";
 
 const state = createState();
+state.audioEnabled = isAudioEnabled();
 preloadAssets();
 preloadAudio();
 let npcTimer = null;
@@ -89,9 +90,12 @@ function scheduleStartOrder() {
 
 function syncAudio(previous, current) {
   if (previous) {
+    if (previous.audioEnabled !== current.audioEnabled) {
+      setAudioEnabled(current.audioEnabled);
+    }
     playTransitionSounds(previous, current);
   }
-  syncLoop(current);
+  startBackgroundMusic();
 }
 
 function playTransitionSounds(previous, current) {
@@ -121,26 +125,6 @@ function playTransitionSounds(previous, current) {
   }
 }
 
-function syncLoop(current) {
-  const loop = loopForState(current);
-  if (loop) startLoop(loop);
-  else stopLoop();
-}
-
-function loopForState(current) {
-  if (current.screen === "setup") return "setupLoop";
-  if (current.screen === "game-winner" && !current.overlay) return "winnerLoop";
-  if (current.screen === "game" && current.phase === "round-turn" && isWaitingForHumanRoll(current)) return "rollWaitLoop";
-  return null;
-}
-
-function isWaitingForHumanRoll(current) {
-  if (current.dice.isAnimating || current.overlay || current.game.pendingAutoHoldSeatId !== null) return false;
-  const seat = current.seats.find((item) => item.seatIndex === current.game.currentSeatId);
-  if (!seat || seat.isNpc || seat.lastRoll?.isMexico) return false;
-  return seat.turnRollsUsed < rollLimitForAudio(current, seat);
-}
-
 function totalStrikes(current) {
   return current.seats.reduce((total, seat) => total + seat.strikes, 0);
 }
@@ -149,13 +133,9 @@ function outCount(current) {
   return current.seats.filter((seat) => seat.isOut).length;
 }
 
-function rollLimitForAudio(current, seat) {
-  if (seat.seatIndex === current.game.startingSeatId) return 3;
-  return current.game.maxRollsThisRound ?? 1;
-}
-
 function snapshotState(current) {
   return {
+    audioEnabled: current.audioEnabled,
     screen: current.screen,
     phase: current.phase,
     overlay: current.overlay ? { ...current.overlay } : null,
