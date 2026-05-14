@@ -85,6 +85,8 @@ const CHARACTERS = {
   jebuz: character("jebuz", "Jebuz"),
 };
 
+const imageCache = new Map();
+
 function character(id, defaultName) {
   return {
     id,
@@ -100,7 +102,115 @@ function character(id, defaultName) {
   };
 }
 
+function loadImage(src) {
+  if (!src || typeof Image === "undefined") return Promise.resolve(null);
+  if (!imageCache.has(src)) {
+    const img = new Image();
+    const promise = new Promise((resolve) => {
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+    });
+    img.src = src;
+    imageCache.set(src, promise);
+  }
+  return imageCache.get(src);
+}
+
+function preloadImages(paths) {
+  const unique = [...new Set(paths.filter(Boolean))];
+  unique.forEach((src) => loadImage(src));
+}
+
+function preloadInitialAssets() {
+  preloadImages([
+    ASSETS.branding.main,
+    ASSETS.branding.small,
+    ...CHARACTER_ORDER.map((id) => CHARACTERS[id].portrait),
+  ]);
+}
+
+function preloadGameplayAssets(seats = []) {
+  const characterIds = selectedCharacterIds(seats);
+  preloadImages([
+    ASSETS.branding.small,
+    ASSETS.props.diceRollArea,
+    ASSETS.props.tableShadow,
+    ...Object.values(ASSETS.diceFaces),
+    ASSETS.icons.coin,
+    ASSETS.icons.strike,
+    ASSETS.icons.sombrero,
+    ASSETS.icons.pot,
+    ASSETS.icons.npc,
+    ASSETS.icons.out,
+    ASSETS.icons.tiebreaker,
+    ASSETS.icons.turn,
+    ASSETS.diceSprites.shake.src,
+    ASSETS.diceSprites.throw.src,
+    ASSETS.diceSprites.pickup.src,
+    ASSETS.diceSprites.bounce.src,
+    ...characterIds.map((id) => CHARACTERS[id].portrait),
+    ...characterIds.map((id) => CHARACTERS[id].sprites.idle.src),
+    ...characterIds.flatMap((id) => characterDiceSpritePaths(id)),
+  ]);
+}
+
+function preloadEventAssets(state) {
+  const paths = [];
+  const queue = [state?.overlay, state?.pendingOverlay, ...(state?.overlayQueue ?? [])].filter(Boolean);
+  queue.forEach((overlay) => {
+    const event = eventAssetForType(overlay.type);
+    if (event) paths.push(event);
+  });
+
+  (state?.seats ?? []).forEach((seat) => {
+    const sprite = CHARACTERS[seat.characterId]?.sprites?.[seat.spriteState];
+    if (sprite) paths.push(sprite.src);
+  });
+
+  if (state?.screen === "game-winner" || state?.screen === "session-champion") {
+    paths.push(
+      ASSETS.events.gameWinner,
+      ASSETS.events.sessionChampion,
+      ASSETS.props.coinBurst,
+      ASSETS.icons.pot,
+      ASSETS.props.diceRollArea,
+    );
+  }
+
+  preloadImages(paths);
+}
+
 function preloadAssets() {
+  preloadInitialAssets();
+}
+
+function selectedCharacterIds(seats) {
+  return [...new Set(seats.map((seat) => seat.characterId).filter(Boolean))];
+}
+
+function characterDiceSpritePaths(characterId) {
+  const characterSprites = ASSETS.diceSprites.byCharacter?.[characterId] ?? {};
+  return [
+    characterSprites.shake?.src,
+    characterSprites.throw?.src,
+    characterSprites.pickup?.src,
+    ASSETS.diceSprites.bounce.src,
+  ].filter(Boolean);
+}
+
+function eventAssetForType(type) {
+  return {
+    mexico: ASSETS.events.mexico,
+    tiebreaker: ASSETS.events.tiebreaker,
+    roundWinner: ASSETS.events.roundWinner,
+    rideBus: ASSETS.events.rideBus,
+    playerOut: ASSETS.events.playerOut,
+    gameWinner: ASSETS.events.gameWinner,
+    sessionChampion: ASSETS.events.sessionChampion,
+  }[type];
+}
+
+function preloadAllAssetsForDiagnostics() {
   const paths = new Set();
   const collect = (value) => {
     if (!value) return;
@@ -110,10 +220,7 @@ function preloadAssets() {
   };
   collect(ASSETS);
   collect(CHARACTERS);
-  paths.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
+  preloadImages([...paths]);
 }
 
 
@@ -170,8 +277,8 @@ let audioEnabled = loadAudioPreference();
 let backgroundMusic = null;
 
 function preloadAudio() {
-  Object.keys(SOUND_PATHS).forEach((name) => getAudio(name));
-  Object.keys(MUSIC_PATHS).forEach((name) => getMusic(name));
+  if (!audioEnabled) return;
+  ["uiClick", "characterSelect", "startOrderRoll"].forEach((name) => getAudio(name, "metadata"));
 }
 
 function unlockAudio() {
@@ -180,7 +287,7 @@ function unlockAudio() {
     return;
   }
   isUnlocked = true;
-  const audio = getAudio("uiClick");
+  const audio = getAudio("uiClick", "auto");
   audio?.play().then(() => {
     audio.pause();
     audio.currentTime = 0;
@@ -190,7 +297,7 @@ function unlockAudio() {
 
 function playSound(name) {
   if (!audioEnabled) return;
-  const base = getAudio(name);
+  const base = getAudio(name, "auto");
   if (!base) return;
   const audio = base.cloneNode();
   audio.volume = volumeFor(name);
@@ -204,7 +311,7 @@ function startLoop(name) {
   if (!audioEnabled) return;
   if (activeLoopName === name && activeLoop) return;
   stopLoop();
-  const audio = getAudio(name);
+  const audio = getAudio(name, "auto");
   if (!audio) return;
   audio.loop = true;
   audio.volume = volumeFor(name);
@@ -238,7 +345,7 @@ function stopAllAudio() {
 
 function startBackgroundMusic() {
   if (!audioEnabled || !isUnlocked) return;
-  const audio = getMusic("background");
+  const audio = getMusic("background", "auto");
   if (!audio) return;
   if (!backgroundMusic) backgroundMusic = audio;
   audio.loop = true;
@@ -260,25 +367,29 @@ function isAudioEnabled() {
   return audioEnabled;
 }
 
-function getAudio(name) {
+function getAudio(name, preload = "metadata") {
   if (!SOUND_PATHS[name] || typeof Audio === "undefined") return null;
   if (!cache.has(name)) {
     const audio = new Audio(SOUND_PATHS[name]);
-    audio.preload = "auto";
+    audio.preload = preload;
     audio.volume = volumeFor(name);
     cache.set(name, audio);
+  } else if (preload === "auto") {
+    cache.get(name).preload = "auto";
   }
   return cache.get(name);
 }
 
-function getMusic(name) {
+function getMusic(name, preload = "metadata") {
   if (!MUSIC_PATHS[name] || typeof Audio === "undefined") return null;
   if (!musicCache.has(name)) {
     const audio = new Audio(MUSIC_PATHS[name]);
-    audio.preload = "auto";
+    audio.preload = preload;
     audio.loop = true;
     audio.volume = volumeFor(name);
     musicCache.set(name, audio);
+  } else if (preload === "auto") {
+    musicCache.get(name).preload = "auto";
   }
   return musicCache.get(name);
 }
@@ -1553,7 +1664,7 @@ function h(tag, className = "", props = {}, ...children) {
 
 const state = createState();
 state.audioEnabled = isAudioEnabled();
-preloadAssets();
+preloadInitialAssets();
 preloadAudio();
 let npcTimer = null;
 let diceTimer = null;
@@ -1563,6 +1674,7 @@ let startOrderTimer = null;
 function dispatch(mutator) {
   const previous = snapshotState(state);
   mutator(state);
+  syncAssetPreloads(state);
   render(state, dispatch);
   syncAudio(previous, state);
   scheduleDiceSettle();
@@ -1572,6 +1684,7 @@ function dispatch(mutator) {
 }
 
 render(state, dispatch);
+syncAssetPreloads(state);
 syncAudio(null, state);
 scheduleStartOrder();
 scheduleNpc();
@@ -1643,6 +1756,15 @@ function syncAudio(previous, current) {
     playTransitionSounds(previous, current);
   }
   startBackgroundMusic();
+}
+
+function syncAssetPreloads(current) {
+  if (current.screen === "buy-in" || current.screen === "start-order" || current.screen === "game" || current.screen === "game-winner" || current.screen === "session-champion") {
+    preloadGameplayAssets(current.seats);
+  }
+  if (current.overlay || current.pendingOverlay || current.overlayQueue.length || current.screen === "game-winner" || current.screen === "session-champion") {
+    preloadEventAssets(current);
+  }
 }
 
 function playTransitionSounds(previous, current) {

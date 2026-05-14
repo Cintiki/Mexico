@@ -74,6 +74,8 @@ export const CHARACTERS = {
   jebuz: character("jebuz", "Jebuz"),
 };
 
+const imageCache = new Map();
+
 function character(id, defaultName) {
   return {
     id,
@@ -89,7 +91,115 @@ function character(id, defaultName) {
   };
 }
 
+export function loadImage(src) {
+  if (!src || typeof Image === "undefined") return Promise.resolve(null);
+  if (!imageCache.has(src)) {
+    const img = new Image();
+    const promise = new Promise((resolve) => {
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+    });
+    img.src = src;
+    imageCache.set(src, promise);
+  }
+  return imageCache.get(src);
+}
+
+export function preloadImages(paths) {
+  const unique = [...new Set(paths.filter(Boolean))];
+  unique.forEach((src) => loadImage(src));
+}
+
+export function preloadInitialAssets() {
+  preloadImages([
+    ASSETS.branding.main,
+    ASSETS.branding.small,
+    ...CHARACTER_ORDER.map((id) => CHARACTERS[id].portrait),
+  ]);
+}
+
+export function preloadGameplayAssets(seats = []) {
+  const characterIds = selectedCharacterIds(seats);
+  preloadImages([
+    ASSETS.branding.small,
+    ASSETS.props.diceRollArea,
+    ASSETS.props.tableShadow,
+    ...Object.values(ASSETS.diceFaces),
+    ASSETS.icons.coin,
+    ASSETS.icons.strike,
+    ASSETS.icons.sombrero,
+    ASSETS.icons.pot,
+    ASSETS.icons.npc,
+    ASSETS.icons.out,
+    ASSETS.icons.tiebreaker,
+    ASSETS.icons.turn,
+    ASSETS.diceSprites.shake.src,
+    ASSETS.diceSprites.throw.src,
+    ASSETS.diceSprites.pickup.src,
+    ASSETS.diceSprites.bounce.src,
+    ...characterIds.map((id) => CHARACTERS[id].portrait),
+    ...characterIds.map((id) => CHARACTERS[id].sprites.idle.src),
+    ...characterIds.flatMap((id) => characterDiceSpritePaths(id)),
+  ]);
+}
+
+export function preloadEventAssets(state) {
+  const paths = [];
+  const queue = [state?.overlay, state?.pendingOverlay, ...(state?.overlayQueue ?? [])].filter(Boolean);
+  queue.forEach((overlay) => {
+    const event = eventAssetForType(overlay.type);
+    if (event) paths.push(event);
+  });
+
+  (state?.seats ?? []).forEach((seat) => {
+    const sprite = CHARACTERS[seat.characterId]?.sprites?.[seat.spriteState];
+    if (sprite) paths.push(sprite.src);
+  });
+
+  if (state?.screen === "game-winner" || state?.screen === "session-champion") {
+    paths.push(
+      ASSETS.events.gameWinner,
+      ASSETS.events.sessionChampion,
+      ASSETS.props.coinBurst,
+      ASSETS.icons.pot,
+      ASSETS.props.diceRollArea,
+    );
+  }
+
+  preloadImages(paths);
+}
+
 export function preloadAssets() {
+  preloadInitialAssets();
+}
+
+function selectedCharacterIds(seats) {
+  return [...new Set(seats.map((seat) => seat.characterId).filter(Boolean))];
+}
+
+function characterDiceSpritePaths(characterId) {
+  const characterSprites = ASSETS.diceSprites.byCharacter?.[characterId] ?? {};
+  return [
+    characterSprites.shake?.src,
+    characterSprites.throw?.src,
+    characterSprites.pickup?.src,
+    ASSETS.diceSprites.bounce.src,
+  ].filter(Boolean);
+}
+
+function eventAssetForType(type) {
+  return {
+    mexico: ASSETS.events.mexico,
+    tiebreaker: ASSETS.events.tiebreaker,
+    roundWinner: ASSETS.events.roundWinner,
+    rideBus: ASSETS.events.rideBus,
+    playerOut: ASSETS.events.playerOut,
+    gameWinner: ASSETS.events.gameWinner,
+    sessionChampion: ASSETS.events.sessionChampion,
+  }[type];
+}
+
+export function preloadAllAssetsForDiagnostics() {
   const paths = new Set();
   const collect = (value) => {
     if (!value) return;
@@ -99,8 +209,5 @@ export function preloadAssets() {
   };
   collect(ASSETS);
   collect(CHARACTERS);
-  paths.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
+  preloadImages([...paths]);
 }

@@ -50,8 +50,8 @@ let audioEnabled = loadAudioPreference();
 let backgroundMusic = null;
 
 export function preloadAudio() {
-  Object.keys(SOUND_PATHS).forEach((name) => getAudio(name));
-  Object.keys(MUSIC_PATHS).forEach((name) => getMusic(name));
+  if (!audioEnabled) return;
+  ["uiClick", "characterSelect", "startOrderRoll"].forEach((name) => getAudio(name, "metadata"));
 }
 
 export function unlockAudio() {
@@ -60,7 +60,7 @@ export function unlockAudio() {
     return;
   }
   isUnlocked = true;
-  const audio = getAudio("uiClick");
+  const audio = getAudio("uiClick", "auto");
   audio?.play().then(() => {
     audio.pause();
     audio.currentTime = 0;
@@ -70,7 +70,7 @@ export function unlockAudio() {
 
 export function playSound(name) {
   if (!audioEnabled) return;
-  const base = getAudio(name);
+  const base = getAudio(name, "auto");
   if (!base) return;
   const audio = base.cloneNode();
   audio.volume = volumeFor(name);
@@ -84,7 +84,7 @@ export function startLoop(name) {
   if (!audioEnabled) return;
   if (activeLoopName === name && activeLoop) return;
   stopLoop();
-  const audio = getAudio(name);
+  const audio = getAudio(name, "auto");
   if (!audio) return;
   audio.loop = true;
   audio.volume = volumeFor(name);
@@ -118,7 +118,7 @@ export function stopAllAudio() {
 
 export function startBackgroundMusic() {
   if (!audioEnabled || !isUnlocked) return;
-  const audio = getMusic("background");
+  const audio = getMusic("background", "auto");
   if (!audio) return;
   if (!backgroundMusic) backgroundMusic = audio;
   audio.loop = true;
@@ -140,25 +140,29 @@ export function isAudioEnabled() {
   return audioEnabled;
 }
 
-function getAudio(name) {
+function getAudio(name, preload = "metadata") {
   if (!SOUND_PATHS[name] || typeof Audio === "undefined") return null;
   if (!cache.has(name)) {
     const audio = new Audio(SOUND_PATHS[name]);
-    audio.preload = "auto";
+    audio.preload = preload;
     audio.volume = volumeFor(name);
     cache.set(name, audio);
+  } else if (preload === "auto") {
+    cache.get(name).preload = "auto";
   }
   return cache.get(name);
 }
 
-function getMusic(name) {
+function getMusic(name, preload = "metadata") {
   if (!MUSIC_PATHS[name] || typeof Audio === "undefined") return null;
   if (!musicCache.has(name)) {
     const audio = new Audio(MUSIC_PATHS[name]);
-    audio.preload = "auto";
+    audio.preload = preload;
     audio.loop = true;
     audio.volume = volumeFor(name);
     musicCache.set(name, audio);
+  } else if (preload === "auto") {
+    musicCache.get(name).preload = "auto";
   }
   return musicCache.get(name);
 }

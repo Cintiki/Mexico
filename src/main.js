@@ -1,4 +1,4 @@
-import { preloadAssets } from "./assets.js";
+import { preloadEventAssets, preloadGameplayAssets, preloadInitialAssets } from "./assets.js";
 import { isAudioEnabled, preloadAudio, playSound, setAudioEnabled, startBackgroundMusic, stopLoop, unlockAudio } from "./audio.js";
 import { createState } from "./state.js";
 import { render } from "./render.js";
@@ -6,7 +6,7 @@ import { holdCurrentPlayer, runNpcStep, settleCurrentRoll, stepStartOrder } from
 
 const state = createState();
 state.audioEnabled = isAudioEnabled();
-preloadAssets();
+preloadInitialAssets();
 preloadAudio();
 let npcTimer = null;
 let diceTimer = null;
@@ -16,6 +16,7 @@ let startOrderTimer = null;
 function dispatch(mutator) {
   const previous = snapshotState(state);
   mutator(state);
+  syncAssetPreloads(state);
   render(state, dispatch);
   syncAudio(previous, state);
   scheduleDiceSettle();
@@ -25,6 +26,7 @@ function dispatch(mutator) {
 }
 
 render(state, dispatch);
+syncAssetPreloads(state);
 syncAudio(null, state);
 scheduleStartOrder();
 scheduleNpc();
@@ -96,6 +98,15 @@ function syncAudio(previous, current) {
     playTransitionSounds(previous, current);
   }
   startBackgroundMusic();
+}
+
+function syncAssetPreloads(current) {
+  if (current.screen === "buy-in" || current.screen === "start-order" || current.screen === "game" || current.screen === "game-winner" || current.screen === "session-champion") {
+    preloadGameplayAssets(current.seats);
+  }
+  if (current.overlay || current.pendingOverlay || current.overlayQueue.length || current.screen === "game-winner" || current.screen === "session-champion") {
+    preloadEventAssets(current);
+  }
 }
 
 function playTransitionSounds(previous, current) {
