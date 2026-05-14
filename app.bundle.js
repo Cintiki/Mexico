@@ -1071,7 +1071,9 @@ function landing(state, dispatch) {
       state.phase = "player-count";
     }) }),
   );
+  screen.append(rulesButton(dispatch));
   screen.append(soundToggle(state, dispatch));
+  if (state.rulesOpen) screen.append(rulesPopup(dispatch));
   return screen;
 }
 
@@ -1085,7 +1087,9 @@ function playerCount(state, dispatch) {
     h("h1", "screen-title", { text: "How many players?" }),
     choices,
   );
+  screen.append(rulesButton(dispatch));
   screen.append(soundToggle(state, dispatch));
+  if (state.rulesOpen) screen.append(rulesPopup(dispatch));
   return screen;
 }
 
@@ -1124,7 +1128,9 @@ function setup(state, dispatch) {
     form,
     h("button", "big-button", { text: "Start Game", onClick: () => dispatch(validateAndCreateSeats) }),
   );
+  screen.append(rulesButton(dispatch));
   screen.append(soundToggle(state, dispatch));
+  if (state.rulesOpen) screen.append(rulesPopup(dispatch));
   return screen;
 }
 
@@ -1143,7 +1149,9 @@ function preGame(state, dispatch) {
     scoreboard(state),
     action,
   );
+  screen.append(rulesButton(dispatch));
   screen.append(soundToggle(state, dispatch));
+  if (state.rulesOpen) screen.append(rulesPopup(dispatch));
   return screen;
 }
 
@@ -1159,7 +1167,9 @@ function startOrderScreen(state, dispatch) {
     startOrderBoard(state),
     action,
   );
+  screen.append(rulesButton(dispatch));
   screen.append(soundToggle(state, dispatch));
+  if (state.rulesOpen) screen.append(rulesPopup(dispatch));
   return screen;
 }
 

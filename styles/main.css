@@ -1969,8 +1969,9 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .play-area {
     height: auto;
-    grid-template-rows: 42px minmax(38px, auto) clamp(210px, 31vh, 280px) minmax(56px, auto);
-    gap: 3px;
+    grid-template-rows: 42px minmax(38px, auto) clamp(196px, 29vh, 252px) minmax(56px, auto);
+    gap: 6px;
+    margin-bottom: 10px;
     overflow: visible;
   }
 
@@ -1994,13 +1995,13 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .dice-tray {
-    width: min(100%, 390px);
+    width: min(100%, 370px);
   }
 
   .game-board.screen-game .character-sprite {
     left: 2%;
     bottom: 0;
-    width: min(130px, 36%);
+    width: min(118px, 34%);
   }
 
   .game-board.screen-game .dice-sprite {
@@ -2010,8 +2011,8 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .final-dice {
-    left: 45%;
-    bottom: 39%;
+    left: 47%;
+    bottom: 31%;
     gap: 9px;
   }
 
@@ -2028,6 +2029,10 @@ button:not(:disabled):hover {
     padding: 0;
   }
 
+  .game-board.screen-game.phase-round-result .controls {
+    min-height: 58px;
+  }
+
   .game-board.screen-game .controls .game-button,
   .game-board.screen-game .roll-limit-note {
     min-height: 44px;
@@ -2035,10 +2040,17 @@ button:not(:disabled):hover {
     font-size: 18px;
   }
 
+  .game-board.screen-game.phase-round-result .controls .big-button {
+    min-height: 54px;
+    padding: 7px 24px 10px;
+    font-size: clamp(28px, 8vw, 36px);
+  }
+
   .game-board.screen-game .side-panel {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px;
+    margin-top: 2px;
     order: 2;
   }
 
@@ -2078,7 +2090,7 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .player-row {
-    grid-template-columns: 42px minmax(0, 1fr) minmax(54px, 72px) minmax(36px, 52px) 48px;
+    grid-template-columns: 42px minmax(0, 1fr) minmax(50px, 64px) minmax(32px, 48px) 42px;
     min-height: 48px;
     gap: 5px;
     padding: 4px;
@@ -2090,6 +2102,19 @@ button:not(:disabled):hover {
   .game-board.screen-game .strike-text,
   .game-board.screen-game .coin-text {
     font-size: 14px;
+  }
+
+  .game-board.screen-game .roll-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .game-board.screen-game .strike-text {
+    letter-spacing: 0.03em;
+  }
+
+  .game-board.screen-game .coin-text {
+    gap: 0;
   }
 
   .game-board.screen-game .status-icons {
