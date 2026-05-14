@@ -551,8 +551,8 @@ button:not(:disabled):hover {
 .die-shadow {
   position: absolute;
   left: 50%;
-  bottom: calc(-20% - 4px);
-  width: 130%;
+  bottom: calc(-20% - 6px);
+  width: 125%;
   height: auto;
   aspect-ratio: 2 / 1;
   transform: translateX(-50%);
