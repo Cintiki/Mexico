@@ -120,6 +120,7 @@ function preloadAssets() {
 // src/audio.js
 const SOUND_PATHS = {
   uiClick: "assets/sounds/01_ui_click_guitar_pluck_16bit.wav",
+  startOrderRoll: "assets/sounds/02_character_select_guitar_blip_16bit.wav",
   characterSelect: "assets/sounds/02_character_select_guitar_blip_16bit.wav",
   setupLoop: "assets/sounds/03_setup_screen_loop_cantina_16bit.wav",
   startGame: "assets/sounds/04_start_game_mariachi_stinger_16bit.wav",
@@ -145,6 +146,7 @@ const VOLUMES = {
   rollWaitLoop: 0.04,
   winnerLoop: 0.05,
   uiClick: 0.58,
+  startOrderRoll: 0.64,
   characterSelect: 0.58,
   diceShake: 0.72,
   diceLand: 0.78,
@@ -1632,11 +1634,11 @@ function syncAudio(previous, current) {
 }
 
 function playTransitionSounds(previous, current) {
-  if (previous.screen === "setup" && current.screen !== "setup") {
-    playSound("startGame");
-  }
   if (current.game.pot > previous.game.pot) {
     playSound("potAdd");
+  }
+  if (hasNewStartOrderRoll(previous, current)) {
+    playSound("startOrderRoll");
   }
   if (!previous.dice.isAnimating && current.dice.isAnimating && current.dice.animationStage === "shake") {
     stopLoop();
@@ -1666,6 +1668,12 @@ function outCount(current) {
   return current.seats.filter((seat) => seat.isOut).length;
 }
 
+function hasNewStartOrderRoll(previous, current) {
+  if (current.screen !== "start-order") return false;
+  return Object.entries(current.startOrder.displayRolls)
+    .some(([seatId, die]) => previous.startOrder.displayRolls[seatId] !== die);
+}
+
 function snapshotState(current) {
   return {
     audioEnabled: current.audioEnabled,
@@ -1686,6 +1694,9 @@ function snapshotState(current) {
       startingSeatId: current.game.startingSeatId,
       maxRollsThisRound: current.game.maxRollsThisRound,
       pendingAutoHoldSeatId: current.game.pendingAutoHoldSeatId,
+    },
+    startOrder: {
+      displayRolls: { ...current.startOrder.displayRolls },
     },
     dice: {
       isAnimating: current.dice.isAnimating,

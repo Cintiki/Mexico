@@ -99,11 +99,11 @@ function syncAudio(previous, current) {
 }
 
 function playTransitionSounds(previous, current) {
-  if (previous.screen === "setup" && current.screen !== "setup") {
-    playSound("startGame");
-  }
   if (current.game.pot > previous.game.pot) {
     playSound("potAdd");
+  }
+  if (hasNewStartOrderRoll(previous, current)) {
+    playSound("startOrderRoll");
   }
   if (!previous.dice.isAnimating && current.dice.isAnimating && current.dice.animationStage === "shake") {
     stopLoop();
@@ -133,6 +133,12 @@ function outCount(current) {
   return current.seats.filter((seat) => seat.isOut).length;
 }
 
+function hasNewStartOrderRoll(previous, current) {
+  if (current.screen !== "start-order") return false;
+  return Object.entries(current.startOrder.displayRolls)
+    .some(([seatId, die]) => previous.startOrder.displayRolls[seatId] !== die);
+}
+
 function snapshotState(current) {
   return {
     audioEnabled: current.audioEnabled,
@@ -153,6 +159,9 @@ function snapshotState(current) {
       startingSeatId: current.game.startingSeatId,
       maxRollsThisRound: current.game.maxRollsThisRound,
       pendingAutoHoldSeatId: current.game.pendingAutoHoldSeatId,
+    },
+    startOrder: {
+      displayRolls: { ...current.startOrder.displayRolls },
     },
     dice: {
       isAnimating: current.dice.isAnimating,
