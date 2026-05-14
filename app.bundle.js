@@ -1246,13 +1246,13 @@ function gameBoard(state, dispatch) {
   }
 
   const right = h("aside", "side-panel");
-  if (state.screen === "game") right.append(rulesButton(dispatch));
   right.append(rollToBeat(state));
   right.append(potBox(state));
   right.append(scoreboard(state));
   right.append(logPanel(state));
 
   shell.append(left, right);
+  if (state.screen === "game") shell.append(rulesButton(dispatch));
   shell.append(soundToggle(state, dispatch));
   if (state.overlay) shell.append(overlay(state, dispatch));
   if (state.rulesOpen) shell.append(rulesPopup(dispatch));
