@@ -353,9 +353,7 @@ function controls(state, dispatch) {
     return wrap;
   }
   if (seat) wrap.append(h("span", "roll-limit-note", { text: `Rolls: ${seat.turnRollsUsed}/${limit}` }));
-  if (!rollLimitReached && !mustHoldMexico) {
-    wrap.append(h("button", "game-button", { text: "Roll", disabled, onClick: () => dispatch(rollCurrentPlayer) }));
-  }
+  wrap.append(h("button", "game-button", { text: "Roll", disabled: disabled || rollLimitReached || mustHoldMexico, onClick: () => dispatch(rollCurrentPlayer) }));
   wrap.append(h("button", "game-button", { text: "Hold", disabled: !canHold, onClick: () => dispatch(holdCurrentPlayer) }));
   if (seat?.isNpc) wrap.append(h("button", "game-button", { text: "NPC Step", onClick: () => dispatch(runNpcStep) }));
   return wrap;
