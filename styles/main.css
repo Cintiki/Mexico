@@ -112,7 +112,12 @@ input {
 }
 
 .setup-logo {
-  max-width: 465px;
+  --setup-logo-width: 465px;
+  width: auto;
+  height: min(100%, calc(var(--setup-logo-width) * 0.723));
+  max-width: var(--setup-logo-width);
+  aspect-ratio: 354 / 256;
+  object-fit: contain;
 }
 
 .screen-title,
@@ -246,9 +251,7 @@ button:not(:disabled):hover {
 
 .board:has(.setup-list) .setup-logo,
 .board:has(> .scoreboard) .setup-logo {
-  width: min(465px, 42vw);
-  max-height: 100%;
-  object-fit: contain;
+  --setup-logo-width: min(465px, 42vw);
 }
 
 .board:has(.setup-list) .screen-title,
@@ -550,9 +553,10 @@ button:not(:disabled):hover {
   left: 50%;
   bottom: -2%;
   width: 140%;
-  height: 40%;
+  height: auto;
+  aspect-ratio: 2 / 1;
   transform: translateX(-50%);
-  object-fit: fill;
+  object-fit: contain;
   opacity: 0.56;
   z-index: 0;
 }
@@ -767,10 +771,8 @@ button:not(:disabled):hover {
 }
 
 .board:has(.order-layout) .setup-logo {
-  width: min(190px, 18vw);
+  --setup-logo-width: min(190px, 18vw);
   max-width: 190px;
-  max-height: 100%;
-  object-fit: contain;
 }
 
 .board:has(.order-layout) .screen-title {
@@ -801,7 +803,7 @@ button:not(:disabled):hover {
 
   .board:has(.setup-list) .setup-logo,
   .board:has(> .scoreboard) .setup-logo {
-    width: min(380px, 34vw);
+    --setup-logo-width: min(380px, 34vw);
   }
 
   .board:has(.setup-list) .screen-title,
@@ -849,7 +851,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .setup-logo {
-    width: min(185px, 18vw);
+    --setup-logo-width: min(185px, 18vw);
     transform: translateY(-18px);
   }
 
@@ -1426,7 +1428,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(.setup-list) .setup-logo {
-    width: min(465px, 38vw);
+    --setup-logo-width: min(465px, 38vw);
   }
 
   .board:has(.setup-list) .setup-list {
@@ -1451,7 +1453,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .setup-logo {
-    width: min(210px, 18vw);
+    --setup-logo-width: min(210px, 18vw);
   }
 
   .board:has(.order-layout) .order-layout {
@@ -1818,7 +1820,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(.setup-list) .setup-logo {
-    width: min(250px, 68vw);
+    --setup-logo-width: min(250px, 68vw);
   }
 
   .board:has(.setup-list) .screen-title {
@@ -1879,7 +1881,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .setup-logo {
-    width: min(235px, 62vw);
+    --setup-logo-width: min(235px, 62vw);
     max-width: none;
     transform: none;
   }
