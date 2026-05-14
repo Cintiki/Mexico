@@ -1963,15 +1963,17 @@ button:not(:disabled):hover {
   .game-board.screen-game {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 7px;
     padding: 50px 10px 12px;
   }
 
   .game-board.screen-game .play-area {
+    flex: 0 0 auto;
     height: auto;
-    grid-template-rows: 42px minmax(38px, auto) clamp(196px, 29vh, 252px) minmax(56px, auto);
+    grid-template-rows: 42px minmax(38px, auto) clamp(184px, 27vh, 238px) minmax(56px, auto);
     gap: 6px;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     overflow: visible;
   }
 
@@ -1995,7 +1997,7 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .dice-tray {
-    width: min(100%, 370px);
+    width: min(100%, 354px);
   }
 
   .game-board.screen-game .character-sprite {
@@ -2022,15 +2024,19 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .controls {
+    position: static;
+    z-index: auto;
     height: auto;
     min-height: 56px;
     gap: 7px;
     align-content: center;
     padding: 0;
+    margin-bottom: 8px;
   }
 
   .game-board.screen-game.phase-round-result .controls {
     min-height: 58px;
+    margin-bottom: 18px;
   }
 
   .game-board.screen-game .controls .game-button,
@@ -2047,10 +2053,15 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .side-panel {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px;
-    margin-top: 2px;
+    margin-top: 8px;
     order: 2;
   }
 
@@ -2064,8 +2075,10 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .info-box,
   .game-board.screen-game .pot-box {
+    min-width: 0;
     min-height: 52px;
     padding: 6px;
+    overflow: hidden;
   }
 
   .game-board.screen-game .info-box h2 {
@@ -2085,16 +2098,22 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .scoreboard {
+    width: 100%;
+    min-width: 0;
     grid-column: 1 / -1;
     gap: 5px;
+    overflow: hidden;
   }
 
   .game-board.screen-game .player-row {
-    grid-template-columns: 42px minmax(0, 1fr) minmax(50px, 64px) minmax(32px, 48px) 42px;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: 40px minmax(0, 1fr) minmax(46px, 58px) minmax(28px, 42px) 38px;
     min-height: 48px;
-    gap: 5px;
+    gap: 4px;
     padding: 4px;
     border-width: 3px;
+    overflow: hidden;
   }
 
   .game-board.screen-game .player-meta strong,
@@ -2115,6 +2134,7 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .coin-text {
     gap: 0;
+    overflow: hidden;
   }
 
   .game-board.screen-game .status-icons {
