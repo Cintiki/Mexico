@@ -49,15 +49,21 @@ function scheduleNpc() {
 function scheduleDiceSettle() {
   clearTimeout(diceTimer);
   if (state.dice.isAnimating) {
-    const duration = state.dice.animationStage === "shake" ? 560 : 520;
+    const duration = state.dice.animationStage === "shake" ? 560
+      : state.dice.animationStage === "throw" ? 520
+        : 360;
     diceTimer = setTimeout(() => dispatch((draft) => {
       if (draft.dice.animationStage === "shake") {
         draft.dice.animationStage = "throw";
         return;
       }
+      if (draft.dice.animationStage === "throw") {
+        draft.dice.animationStage = "bounce";
+        settleCurrentRoll(draft);
+        return;
+      }
       draft.dice.isAnimating = false;
       draft.dice.animationStage = null;
-      settleCurrentRoll(draft);
       showPendingOverlay(draft);
     }), duration);
   }

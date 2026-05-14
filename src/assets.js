@@ -60,7 +60,7 @@ export const ASSETS = {
         pickup: { src: "assets/sprites/dice/mexico_dice_pick_up_hand_jebuz_8f.png", frames: 8, ratio: 1, duration: 520 },
       },
     },
-    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_12f.png", frames: 9, ratio: 0.6667 },
+    bounce: { src: "assets/sprites/dice/mexico_dice_bounce_6f.png", frames: 6, ratio: 1, duration: 360 },
   },
 };
 
