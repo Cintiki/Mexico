@@ -353,6 +353,10 @@ button:not(:disabled):hover {
 }
 
 .rules-button {
+  position: absolute;
+  top: clamp(10px, 1.4vw, 18px);
+  left: clamp(10px, 1.4vw, 18px);
+  z-index: 20;
   align-self: flex-end;
   border: 3px solid var(--ink);
   border-radius: 8px;
@@ -1856,6 +1860,97 @@ button:not(:disabled):hover {
     font-size: 26px;
   }
 
+  .board:has(.order-layout) {
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    align-content: start;
+    gap: 8px;
+    padding: 52px 10px 12px;
+  }
+
+  .board:has(.order-layout) .setup-logo {
+    width: min(235px, 62vw);
+    max-width: none;
+    transform: none;
+  }
+
+  .board:has(.order-layout) .screen-title {
+    width: 100%;
+    font-size: clamp(38px, 11vw, 50px);
+    line-height: 0.95;
+    transform: none;
+  }
+
+  .board:has(.order-layout) .screen-copy {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(20px, 5.8vw, 26px);
+    line-height: 1;
+    transform: none;
+  }
+
+  .board:has(.order-layout) .order-layout {
+    width: 100%;
+    align-self: start;
+    transform: none;
+  }
+
+  .board:has(.order-layout) .order-list {
+    width: 100%;
+    gap: 7px;
+    margin: 0;
+    transform: none;
+  }
+
+  .board:has(.order-layout) .order-row-wrap {
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 8px;
+    justify-content: stretch;
+  }
+
+  .board:has(.order-layout) .order-row-status {
+    display: none;
+  }
+
+  .board:has(.order-layout) .order-rank {
+    font-size: clamp(34px, 10vw, 44px);
+    text-align: right;
+  }
+
+  .board:has(.order-layout) .order-player-row {
+    grid-template-columns: 50px minmax(0, 1fr) 52px;
+    min-height: 58px;
+    gap: 8px;
+    padding: 5px 7px;
+    border-width: 3px;
+  }
+
+  .board:has(.order-layout) .order-player-row .player-meta strong {
+    font-size: 20px;
+  }
+
+  .board:has(.order-layout) .order-die {
+    width: 46px;
+    height: 46px;
+  }
+
+  .board:has(.order-layout) .order-die-face {
+    width: 46px;
+    height: 46px;
+  }
+
+  .board:has(.order-layout) .order-player-row .roll-text,
+  .board:has(.order-layout) .order-player-row .strike-text,
+  .board:has(.order-layout) .order-player-row .coin-text {
+    display: none;
+  }
+
+  .board:has(.order-layout) .big-button {
+    justify-self: center;
+    min-height: 58px;
+    padding: 8px 26px 11px;
+    font-size: clamp(28px, 8.2vw, 36px);
+  }
+
   .player-row {
     grid-template-columns: 48px minmax(0, 1fr) minmax(64px, 90px) 36px 56px;
   }
@@ -1948,8 +2043,8 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .rules-button {
-    grid-column: 1 / -1;
-    justify-self: end;
+    top: 8px;
+    left: 8px;
     min-height: 34px;
     padding: 4px 10px 6px;
     font-size: 14px;
@@ -2009,6 +2104,32 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .log-panel {
     display: none;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    place-items: center;
+    padding: 14px;
+  }
+
+  .overlay-card {
+    width: min(360px, calc(100vw - 42px));
+    max-height: calc(100dvh - 42px);
+    overflow: auto;
+    padding: 16px;
+  }
+
+  .overlay-card .event-card {
+    width: min(250px, 82%);
+  }
+
+  .overlay-card h2 {
+    font-size: clamp(30px, 8.5vw, 38px);
+  }
+
+  .overlay-card p {
+    font-size: clamp(18px, 5vw, 22px);
   }
 }
 
