@@ -117,6 +117,114 @@ function preloadAssets() {
 }
 
 
+// src/audio.js
+const SOUND_PATHS = {
+  uiClick: "assets/sounds/01_ui_click_guitar_pluck_16bit.wav",
+  characterSelect: "assets/sounds/02_character_select_guitar_blip_16bit.wav",
+  setupLoop: "assets/sounds/03_setup_screen_loop_cantina_16bit.wav",
+  startGame: "assets/sounds/04_start_game_mariachi_stinger_16bit.wav",
+  rollWaitLoop: "assets/sounds/05_roll_choice_loop_mariachi_waiting_16bit.wav",
+  diceShake: "assets/sounds/06_dice_shake_16bit_1p08s.wav",
+  diceLand: "assets/sounds/07_dice_land_guitar_clack_16bit.wav",
+  mexicoRoll: "assets/sounds/08_mexico_roll_mariachi_horns_16bit.wav",
+  strike: "assets/sounds/09_strike_muted_guitar_stab_16bit.wav",
+  playerOut: "assets/sounds/10_player_out_sad_horn_16bit.wav",
+  potAdd: "assets/sounds/11_coin_pot_cantina_clink_16bit.wav",
+  potWinner: "assets/sounds/12_pot_winner_coin_mariachi_16bit.wav",
+  gameWinner: "assets/sounds/13_game_winner_mariachi_fanfare_16bit.wav",
+  winnerLoop: "assets/sounds/14_winner_screen_loop_soft_mariachi_16bit.wav",
+};
+
+const VOLUMES = {
+  setupLoop: 0.24,
+  rollWaitLoop: 0.18,
+  winnerLoop: 0.18,
+  uiClick: 0.34,
+  characterSelect: 0.34,
+  diceShake: 0.46,
+  diceLand: 0.52,
+  mexicoRoll: 0.56,
+  strike: 0.46,
+  playerOut: 0.56,
+  potAdd: 0.42,
+  potWinner: 0.56,
+  gameWinner: 0.62,
+  startGame: 0.56,
+};
+
+const cache = new Map();
+let activeLoop = null;
+let activeLoopName = null;
+let isUnlocked = false;
+
+function preloadAudio() {
+  Object.keys(SOUND_PATHS).forEach((name) => getAudio(name));
+}
+
+function unlockAudio() {
+  if (isUnlocked) return;
+  isUnlocked = true;
+  const audio = getAudio("uiClick");
+  audio?.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+  }).catch(() => {});
+}
+
+function playSound(name) {
+  const base = getAudio(name);
+  if (!base) return;
+  const audio = base.cloneNode();
+  audio.volume = volumeFor(name);
+  audio.loop = false;
+  audio.play().catch(() => {});
+}
+
+function startLoop(name) {
+  if (activeLoopName === name && activeLoop) return;
+  stopLoop();
+  const audio = getAudio(name);
+  if (!audio) return;
+  audio.loop = true;
+  audio.volume = volumeFor(name);
+  audio.currentTime = 0;
+  activeLoop = audio;
+  activeLoopName = name;
+  audio.play().catch(() => {});
+}
+
+function stopLoop() {
+  if (!activeLoop) return;
+  activeLoop.pause();
+  activeLoop.currentTime = 0;
+  activeLoop = null;
+  activeLoopName = null;
+}
+
+function stopAllAudio() {
+  stopLoop();
+  cache.forEach((audio) => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+}
+
+function getAudio(name) {
+  if (!SOUND_PATHS[name] || typeof Audio === "undefined") return null;
+  if (!cache.has(name)) {
+    const audio = new Audio(SOUND_PATHS[name]);
+    audio.preload = "auto";
+    audio.volume = volumeFor(name);
+    cache.set(name, audio);
+  }
+  return cache.get(name);
+}
+
+function volumeFor(name) {
+  return VOLUMES[name] ?? 0.4;
+}
+
+
 // src/scoring.js
 const NORMAL_RANKS = {
   31: 1,
@@ -1234,13 +1342,14 @@ function eventFeature(state) {
   if (state.screen === "game-winner") {
     const winner = gameWinnerSeat(state);
     feature.classList.add("winner-feature");
-    feature.append(h("div", "winner-stage",
+    const stage = h("div", "winner-stage",
       {},
       h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }),
       h("img", "winner-pot-icon", { src: ASSETS.icons.pot, alt: "Pot" }),
       h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }),
-    ));
-    if (winner) feature.append(characterSprite(winner));
+    );
+    if (winner) stage.append(characterSprite(winner));
+    feature.append(stage);
     feature.append(h("div", "winner-pot",
       {},
       h("span", "", { text: "Pot Winner" }),
@@ -1329,14 +1438,17 @@ function h(tag, className = "", props = {}, ...children) {
 
 const state = createState();
 preloadAssets();
+preloadAudio();
 let npcTimer = null;
 let diceTimer = null;
 let autoHoldTimer = null;
 let startOrderTimer = null;
 
 function dispatch(mutator) {
+  const previous = snapshotState(state);
   mutator(state);
   render(state, dispatch);
+  syncAudio(previous, state);
   scheduleDiceSettle();
   scheduleAutoHold();
   scheduleStartOrder();
@@ -1344,8 +1456,16 @@ function dispatch(mutator) {
 }
 
 render(state, dispatch);
+syncAudio(null, state);
 scheduleStartOrder();
 scheduleNpc();
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("button");
+  if (!button || button.disabled) return;
+  unlockAudio();
+  playSound(button.classList.contains("portrait-choice") ? "characterSelect" : "uiClick");
+}, true);
 
 function scheduleNpc() {
   clearTimeout(npcTimer);
@@ -1397,6 +1517,103 @@ function scheduleStartOrder() {
   if (state.screen === "start-order" && state.startOrder.phase === "rolling" && !state.overlay) {
     startOrderTimer = setTimeout(() => dispatch(stepStartOrder), 120);
   }
+}
+
+function syncAudio(previous, current) {
+  if (previous) {
+    playTransitionSounds(previous, current);
+  }
+  syncLoop(current);
+}
+
+function playTransitionSounds(previous, current) {
+  if (previous.screen === "setup" && current.screen !== "setup") {
+    playSound("startGame");
+  }
+  if (current.game.pot > previous.game.pot) {
+    playSound("potAdd");
+  }
+  if (!previous.dice.isAnimating && current.dice.isAnimating && current.dice.animationStage === "shake") {
+    stopLoop();
+    playSound("diceShake");
+  }
+  if (previous.dice.isAnimating && !current.dice.isAnimating) {
+    playSound("diceLand");
+    if (previous.dice.pendingRoll?.score?.isMexico) playSound("mexicoRoll");
+  }
+  if (totalStrikes(current) > totalStrikes(previous)) {
+    playSound("strike");
+  }
+  if (outCount(current) > outCount(previous)) {
+    playSound("playerOut");
+  }
+  if (previous.screen !== "game-winner" && current.screen === "game-winner") {
+    playSound("potWinner");
+    playSound("gameWinner");
+  }
+}
+
+function syncLoop(current) {
+  const loop = loopForState(current);
+  if (loop) startLoop(loop);
+  else stopLoop();
+}
+
+function loopForState(current) {
+  if (current.screen === "setup") return "setupLoop";
+  if (current.screen === "game-winner" && !current.overlay) return "winnerLoop";
+  if (current.screen === "game" && current.phase === "round-turn" && isWaitingForHumanRoll(current)) return "rollWaitLoop";
+  return null;
+}
+
+function isWaitingForHumanRoll(current) {
+  if (current.dice.isAnimating || current.overlay || current.game.pendingAutoHoldSeatId !== null) return false;
+  const seat = current.seats.find((item) => item.seatIndex === current.game.currentSeatId);
+  if (!seat || seat.isNpc || seat.lastRoll?.isMexico) return false;
+  return seat.turnRollsUsed < rollLimitForAudio(current, seat);
+}
+
+function totalStrikes(current) {
+  return current.seats.reduce((total, seat) => total + seat.strikes, 0);
+}
+
+function outCount(current) {
+  return current.seats.filter((seat) => seat.isOut).length;
+}
+
+function rollLimitForAudio(current, seat) {
+  if (seat.seatIndex === current.game.startingSeatId) return 3;
+  return current.game.maxRollsThisRound ?? 1;
+}
+
+function snapshotState(current) {
+  return {
+    screen: current.screen,
+    phase: current.phase,
+    overlay: current.overlay ? { ...current.overlay } : null,
+    seats: current.seats.map((seat) => ({
+      seatIndex: seat.seatIndex,
+      isNpc: seat.isNpc,
+      strikes: seat.strikes,
+      isOut: seat.isOut,
+      turnRollsUsed: seat.turnRollsUsed,
+      lastRoll: seat.lastRoll ? { ...seat.lastRoll } : null,
+    })),
+    game: {
+      pot: current.game.pot,
+      currentSeatId: current.game.currentSeatId,
+      startingSeatId: current.game.startingSeatId,
+      maxRollsThisRound: current.game.maxRollsThisRound,
+      pendingAutoHoldSeatId: current.game.pendingAutoHoldSeatId,
+    },
+    dice: {
+      isAnimating: current.dice.isAnimating,
+      animationStage: current.dice.animationStage,
+      pendingRoll: current.dice.pendingRoll ? {
+        score: current.dice.pendingRoll.score ? { ...current.dice.pendingRoll.score } : null,
+      } : null,
+    },
+  };
 }
 
 } catch (error) {

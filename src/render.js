@@ -404,13 +404,14 @@ function eventFeature(state) {
   if (state.screen === "game-winner") {
     const winner = gameWinnerSeat(state);
     feature.classList.add("winner-feature");
-    feature.append(h("div", "winner-stage",
+    const stage = h("div", "winner-stage",
       {},
       h("img", "dice-tray winner-tray", { src: ASSETS.props.diceRollArea, alt: "" }),
       h("img", "winner-pot-icon", { src: ASSETS.icons.pot, alt: "Pot" }),
       h("img", "coin-burst", { src: ASSETS.props.coinBurst, alt: "" }),
-    ));
-    if (winner) feature.append(characterSprite(winner));
+    );
+    if (winner) stage.append(characterSprite(winner));
+    feature.append(stage);
     feature.append(h("div", "winner-pot",
       {},
       h("span", "", { text: "Pot Winner" }),

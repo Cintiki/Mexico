@@ -3,6 +3,7 @@ const path = require("path");
 
 const files = [
   "src/assets.js",
+  "src/audio.js",
   "src/scoring.js",
   "src/state.js",
   "src/npc.js",
