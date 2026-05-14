@@ -307,7 +307,7 @@ function diceStage(state) {
     const sprite = diceSpriteForStage(state.dice.animationStage, current);
     stage.append(spriteElement(sprite, "dice-sprite", true, "Rolling dice"));
   }
-  if (state.dice.visibleFinalDice && (!state.dice.isAnimating || state.dice.animationStage === "bounce")) {
+  if (state.dice.visibleFinalDice && !state.dice.isAnimating) {
     const dice = h("div", "final-dice");
     state.dice.visibleFinalDice.forEach((die) => dice.append(
       h("div", "settled-die",
