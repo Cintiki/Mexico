@@ -1772,14 +1772,88 @@ button:not(:disabled):hover {
 
 @media (max-width: 520px) {
   .app {
-    padding: 10px;
+    align-items: start;
+    padding: 8px;
   }
 
   .board,
   .game-board {
-    min-height: calc(100vh - 20px);
+    width: calc(100vw - 16px);
+    height: auto;
+    min-height: calc(100vh - 16px);
     box-shadow: none;
     padding: 14px;
+    overflow: visible;
+  }
+
+  .sound-toggle {
+    top: 8px;
+    right: 8px;
+    min-width: 96px;
+    min-height: 38px;
+    padding: 5px 10px 7px;
+    font-size: 14px;
+  }
+
+  .board:has(.setup-list) {
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    align-content: stretch;
+    gap: 8px;
+    padding: 52px 10px 12px;
+  }
+
+  .board:has(.setup-list) .setup-logo {
+    width: min(250px, 68vw);
+  }
+
+  .board:has(.setup-list) .screen-title {
+    font-size: clamp(30px, 8vw, 38px);
+  }
+
+  .board:has(.setup-list) .setup-list {
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 244px);
+    gap: 8px;
+    overflow-y: auto;
+    padding: 0 2px 4px;
+  }
+
+  .board:has(.setup-list) .setup-row {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 10px;
+  }
+
+  .board:has(.setup-list) .field-label {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .board:has(.setup-list) .name-input {
+    min-height: 44px;
+    padding: 6px 10px;
+    font-size: 20px;
+  }
+
+  .board:has(.setup-list) .portrait-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .board:has(.setup-list) .portrait-choice {
+    border-width: 2px;
+    padding: 2px;
+  }
+
+  .board:has(.setup-list) .portrait-choice.is-selected {
+    outline-width: 3px;
+  }
+
+  .board:has(.setup-list) .big-button {
+    min-height: 52px;
+    padding: 7px 20px 10px;
+    font-size: 26px;
   }
 
   .player-row {
@@ -1789,5 +1863,18 @@ button:not(:disabled):hover {
   .final-dice {
     left: 44%;
     bottom: 76px;
+  }
+}
+
+@supports (height: 100dvh) {
+  @media (max-width: 520px) {
+    .board,
+    .game-board {
+      min-height: calc(100dvh - 16px);
+    }
+
+    .board:has(.setup-list) .setup-list {
+      max-height: calc(100dvh - 244px);
+    }
   }
 }
