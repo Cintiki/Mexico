@@ -1294,7 +1294,7 @@ function startOrderBoard(state) {
     list.append(h("div", "order-row-wrap",
       h("span", "order-row-status", { text: orderRowStatusText(state, seat) }),
       h("span", "order-rank", { text: `#${index + 1}` }),
-      startOrderPlayerRow(state, seat),
+      h("div", "order-player-frame", {}, startOrderPlayerRow(state, seat)),
     ));
   });
   wrap.append(list);
