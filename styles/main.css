@@ -1937,8 +1937,8 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .order-row-wrap {
-    grid-template-columns: 54px minmax(0, 1fr);
-    gap: 8px;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 6px;
     justify-content: stretch;
     width: 100%;
     max-width: 100%;
@@ -1949,7 +1949,7 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .order-rank {
-    font-size: clamp(34px, 10vw, 44px);
+    font-size: clamp(30px, 8.5vw, 38px);
     text-align: right;
   }
 
@@ -1962,24 +1962,24 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .order-player-row {
-    grid-template-columns: 50px minmax(0, 1fr) 52px;
-    min-height: 58px;
-    gap: 8px;
-    padding: 5px 7px;
+    grid-template-columns: 44px minmax(0, 1fr) 42px;
+    min-height: 54px;
+    gap: 6px;
+    padding: 4px 6px;
   }
 
   .board:has(.order-layout) .order-player-row .player-meta strong {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .board:has(.order-layout) .order-die {
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
   }
 
   .board:has(.order-layout) .order-die-face {
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
   }
 
   .board:has(.order-layout) .order-player-row .roll-text,
@@ -2061,14 +2061,14 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .dice-sprite {
     left: 50%;
-    bottom: 15%;
+    bottom: calc(15% + 10px);
     height: min(165px, 60%);
     transform: translateX(-50%);
   }
 
   .game-board.screen-game .final-dice {
     left: 50%;
-    bottom: 18%;
+    bottom: calc(18% + 10px);
     transform: translateX(-50%);
     gap: 9px;
   }
