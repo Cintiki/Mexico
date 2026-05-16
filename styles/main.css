@@ -423,7 +423,7 @@ button:not(:disabled):hover {
   position: absolute;
   left: 42%;
   bottom: 30%;
-  height: min(250px, 58%);
+  height: min(275px, 64%);
   aspect-ratio: var(--sprite-ratio);
   transform: translateX(-10%);
   z-index: 2;
@@ -2063,7 +2063,7 @@ button:not(:disabled):hover {
   .game-board.screen-game .dice-sprite {
     left: 50%;
     bottom: calc(15% + 10px);
-    height: min(165px, 60%);
+    height: min(182px, 66%);
     transform: translateX(-50%);
   }
 
