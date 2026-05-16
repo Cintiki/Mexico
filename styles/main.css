@@ -1940,6 +1940,8 @@ button:not(:disabled):hover {
     grid-template-columns: 54px minmax(0, 1fr);
     gap: 8px;
     justify-content: stretch;
+    width: 100%;
+    max-width: 100%;
   }
 
   .board:has(.order-layout) .order-row-status {
@@ -1952,8 +1954,11 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .order-player-frame {
+    width: 100%;
     min-width: 0;
+    max-width: 100%;
     border-width: 3px;
+    overflow: hidden;
   }
 
   .board:has(.order-layout) .order-player-row {
@@ -2004,7 +2009,7 @@ button:not(:disabled):hover {
     grid-template-rows: auto auto;
     align-content: start;
     align-items: start;
-    gap: 8px;
+    gap: 10px;
     padding: 12px 10px 12px;
   }
 
@@ -2012,7 +2017,7 @@ button:not(:disabled):hover {
     width: 100%;
     height: auto;
     display: grid;
-    grid-template-rows: 72px 58px 156px 48px;
+    grid-template-rows: 68px 54px 150px 46px;
     gap: 4px;
     margin: 0;
     overflow: hidden;
@@ -2055,14 +2060,16 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game .dice-sprite {
-    left: 43%;
-    bottom: 18%;
-    height: min(150px, 54%);
+    left: 50%;
+    bottom: 15%;
+    height: min(165px, 60%);
+    transform: translateX(-50%);
   }
 
   .game-board.screen-game .final-dice {
-    left: 47%;
-    bottom: 20%;
+    left: 50%;
+    bottom: 18%;
+    transform: translateX(-50%);
     gap: 9px;
   }
 
@@ -2075,9 +2082,9 @@ button:not(:disabled):hover {
     position: static;
     z-index: auto;
     display: grid;
-    grid-template-columns: 88px 72px 72px;
+    grid-template-columns: 82px 68px 68px;
     justify-content: center;
-    height: 48px;
+    height: 46px;
     min-height: 0;
     gap: 6px;
     align-content: center;
@@ -2087,7 +2094,7 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game.phase-round-result .controls {
-    height: 48px;
+    height: 46px;
     min-height: 0;
     margin: 0;
   }
@@ -2098,10 +2105,10 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .controls .game-button,
   .game-board.screen-game .roll-limit-note {
-    min-height: 38px;
+    min-height: 36px;
     min-width: 0;
-    padding: 5px 8px 7px;
-    font-size: 16px;
+    padding: 4px 7px 6px;
+    font-size: 15px;
   }
 
   .game-board.screen-game.phase-round-result .controls .big-button {
@@ -2114,13 +2121,14 @@ button:not(:disabled):hover {
     width: 100%;
     min-width: 0;
     position: static;
-    z-index: 1;
+    z-index: 3;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: 42px auto;
+    grid-template-rows: 40px auto;
     gap: 6px;
     margin: 0;
     order: 2;
+    overflow: hidden;
   }
 
   .game-board.screen-game .rules-button {
@@ -2134,9 +2142,9 @@ button:not(:disabled):hover {
   .game-board.screen-game .info-box,
   .game-board.screen-game .pot-box {
     min-width: 0;
-    height: 42px;
+    height: 40px;
     min-height: 0;
-    padding: 3px 6px 4px;
+    padding: 2px 6px 4px;
     overflow: hidden;
   }
 
@@ -2215,6 +2223,48 @@ button:not(:disabled):hover {
 
   .game-board.screen-game .log-panel {
     display: none;
+  }
+
+  .game-board.screen-game-winner {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(72px, auto);
+    gap: 8px;
+    padding: 18px 10px max(12px, env(safe-area-inset-bottom));
+  }
+
+  .game-board.screen-game-winner .play-area {
+    grid-template-rows: 118px 64px minmax(330px, 1fr);
+    gap: 4px;
+    overflow: visible;
+  }
+
+  .game-board.screen-game-winner .winner-stage {
+    width: min(100%, 370px);
+  }
+
+  .game-board.screen-game-winner .winner-pot-icon {
+    width: 42%;
+    top: 44%;
+    z-index: 2;
+  }
+
+  .game-board.screen-game-winner .winner-feature .character-sprite {
+    left: -3%;
+    bottom: 4%;
+    width: min(142px, 32%);
+    z-index: 4;
+  }
+
+  .game-board.screen-game-winner .coin-burst {
+    width: 25%;
+    right: 2%;
+    bottom: 8%;
+    z-index: 4;
+  }
+
+  .game-board.screen-game-winner .winner-pot {
+    padding-left: 0;
+    margin-bottom: 4px;
   }
 
   .overlay {
