@@ -1937,8 +1937,8 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .order-row-wrap {
-    grid-template-columns: 46px minmax(0, 1fr);
-    gap: 6px;
+    grid-template-columns: 42px minmax(0, calc(100vw - 112px));
+    gap: 4px;
     justify-content: stretch;
     width: 100%;
     max-width: 100%;
@@ -1949,16 +1949,17 @@ button:not(:disabled):hover {
   }
 
   .board:has(.order-layout) .order-rank {
-    font-size: clamp(30px, 8.5vw, 38px);
+    font-size: clamp(28px, 8vw, 36px);
     text-align: right;
   }
 
   .board:has(.order-layout) .order-player-frame {
-    width: 100%;
+    width: min(100%, calc(100vw - 112px));
     min-width: 0;
-    max-width: 100%;
+    max-width: calc(100vw - 112px);
     border-width: 3px;
     overflow: hidden;
+    justify-self: start;
   }
 
   .board:has(.order-layout) .order-player-row {
