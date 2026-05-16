@@ -1170,6 +1170,7 @@ button:not(:disabled):hover {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  z-index: 1;
 }
 
 .winner-pot-icon {
@@ -1178,7 +1179,7 @@ button:not(:disabled):hover {
   top: 46%;
   width: 40%;
   max-width: 300px;
-  z-index: 3;
+  z-index: 2;
   object-fit: contain;
   transform: translate(-50%, -50%);
 }
@@ -1187,7 +1188,7 @@ button:not(:disabled):hover {
   left: 1%;
   bottom: 9%;
   width: min(270px, 39%);
-  z-index: 2;
+  z-index: 4;
 }
 
 .coin-burst {
