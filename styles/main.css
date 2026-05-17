@@ -998,7 +998,7 @@ button:not(:disabled):hover {
   display: grid;
   place-items: center;
   background: rgba(247, 243, 232, 0.84);
-  z-index: 10;
+  z-index: 80;
   padding: 20px;
 }
 
@@ -1645,7 +1645,7 @@ button:not(:disabled):hover {
   }
 }
 
-@media (orientation: landscape) and (min-width: 700px) and (max-height: 820px) {
+@media (orientation: landscape) and (min-width: 821px) and (max-height: 820px) {
   .game-board.screen-game {
     padding-bottom: max(28px, env(safe-area-inset-bottom));
   }
@@ -1670,13 +1670,14 @@ button:not(:disabled):hover {
 
   .game-board.screen-game.phase-round-turn .game-logo,
   .game-board.screen-game.phase-round-result .game-logo {
-    align-self: center;
-    transform: translateY(18px);
+    align-self: end;
+    transform: none;
   }
 
   .game-board.screen-game.phase-round-turn .turn-title,
   .game-board.screen-game.phase-round-result .turn-title {
-    align-items: end;
+    align-items: center;
+    line-height: 0.95;
   }
 
   .game-board.screen-game .controls {
