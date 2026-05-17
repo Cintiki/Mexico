@@ -1659,18 +1659,21 @@ button:not(:disabled):hover {
   }
 
   .game-board.screen-game.phase-round-turn .play-area {
-    grid-template-rows: 92px 76px minmax(230px, 1fr) 110px;
+    grid-template-rows: 148px 76px minmax(205px, 1fr) 96px;
     gap: 0;
   }
 
   .game-board.screen-game.phase-round-result .play-area {
-    grid-template-rows: 96px 84px minmax(240px, 1fr) 114px;
+    grid-template-rows: 148px 84px minmax(210px, 1fr) 96px;
     gap: 0;
   }
 
   .game-board.screen-game.phase-round-turn .game-logo,
   .game-board.screen-game.phase-round-result .game-logo {
-    align-self: end;
+    width: min(350px, 54%);
+    max-height: 144px;
+    object-fit: contain;
+    align-self: center;
     transform: none;
   }
 
@@ -1688,15 +1691,15 @@ button:not(:disabled):hover {
     min-height: 96px;
     height: 100%;
     padding-top: 10px;
-    padding-bottom: 18px;
-    transform: translateY(-12px);
+    padding-bottom: 8px;
+    transform: none;
     pointer-events: auto;
     z-index: 30;
   }
 
   .game-board.screen-game.phase-round-result .controls {
     padding-top: 4px;
-    transform: translateY(-18px);
+    transform: none;
   }
 
   .game-board.screen-game .controls .game-button,
