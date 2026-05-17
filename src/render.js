@@ -214,6 +214,9 @@ function gameBoard(state, dispatch) {
     left.append(h("img", "event-card winner-logo", { src: ASSETS.events.gameWinner, alt: "Game winner" }));
     const winner = gameWinnerSeat(state);
     left.append(h("h1", "winner-name", { text: winner ? winner.displayName : "Winner" }));
+  } else if (state.screen === "session-champion") {
+    left.append(h("img", "logo-small game-logo", { src: ASSETS.branding.small, alt: "Mexico" }));
+    left.append(h("h1", "turn-title", { text: titleFor(state) }));
   } else {
     left.append(h("img", "logo-small game-logo", { src: ASSETS.branding.small, alt: "Mexico" }));
     left.append(h("h1", "turn-title", { text: titleFor(state) }));
@@ -506,9 +509,14 @@ function titleFor(state) {
     return state.overlay?.title ?? "Game Winner";
   }
   if (state.screen === "session-champion") {
-    return state.overlay?.title ?? "Session Champion";
+    const champion = sessionChampionSeat(state);
+    return state.overlay?.title ?? `${champion?.displayName ?? "Winner"} is Mexico Champion!`;
   }
   return state.message;
+}
+
+function sessionChampionSeat(state) {
+  return [...state.seats].sort((a, b) => b.coins - a.coins)[0];
 }
 
 function h(tag, className = "", props = {}, ...children) {
